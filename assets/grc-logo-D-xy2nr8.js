@@ -1,0 +1,1 @@
+var e=`/grc/assets/grc-logo-BPRVtil1.webp`;export{e as t};

@@ -1,0 +1,1 @@
+var e=`/grc/assets/august-CC8SiVpR.webp`;export{e as t};
