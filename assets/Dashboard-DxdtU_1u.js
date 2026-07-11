@@ -1,0 +1,1 @@
+import{c as e,t}from"./index-DDwoxJcB.js";e();var n=t(),r=()=>(0,n.jsx)(`div`,{children:`welcome ggg Ayan now`});export{r as default};
