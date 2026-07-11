@@ -22,7 +22,7 @@ const Navbar = () => {
                                 <li><NavLink to="/members">Members</NavLink></li>
                                 <li><NavLink to="/gallery">Gallery</NavLink></li>
                                 <li><NavLink to="/sponsors">Sponsors</NavLink></li>
-                                <li><NavLink to="/login">Login</NavLink></li>
+                                <li><NavLink to="/login" target='_Blank'>Login</NavLink></li>
                             </ul>
                         </nav>)
                         :

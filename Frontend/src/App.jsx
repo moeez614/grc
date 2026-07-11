@@ -1,7 +1,8 @@
 import { useState, lazy, Suspense } from 'react'
 import './App.css'
 import { HashRouter, Route, Routes } from 'react-router-dom'
-
+// Routes
+const ProtectedRoute = lazy(() => import('./Routes/ProtectedRoute.jsx'))
 // loader
 const Loader = lazy(() => import('./Components/Loader.jsx'))
 // pages
@@ -10,12 +11,15 @@ const AboutUs = lazy(() => import('./Pages/AboutUs.jsx'))
 const Events = lazy(() => import('./Pages/Events.jsx'))
 const SponsorsC = lazy(() => import('./Pages/SponsorsC.jsx'))
 const Members = lazy(() => import('./Pages/Members.jsx'))
+const Login = lazy(() => import('./Pages/Login.jsx'))
+const Dashboard = lazy(() => import('./Pages/Dashboard.jsx'))
 // Events
 const Regular = lazy(() => import('./Events/Regular.jsx'))
 const Special = lazy(() => import('./Events/Special.jsx'))
 const RegisterRun = lazy(() => import('./Events/RegisterRun.jsx'))
 const ResultRun = lazy(() => import('./Events/ResultRun.jsx'))
 const SpecialDesc = lazy(() => import('./Events/SpecialDesc.jsx'))
+// Components
 const PrivacyPolicy = lazy(() => import('./Components/PrivacyPolicy.jsx'))
 const TermCondition = lazy(() => import('./Components/TermCondition.jsx'))
 
@@ -73,6 +77,20 @@ function App() {
           <Route path='/termsconditions' element={
             <Suspense fallback={<Loader />}>
               <TermCondition />
+            </Suspense>
+          }></Route>
+          {/*================ login page ============ */}
+          <Route path='/login' element={
+            <Suspense fallback={<Loader />}>
+              <Login />
+            </Suspense>
+          }></Route>
+          {/* ================= dashboard page ============ */}
+          <Route path='/dashboard' element={
+            <Suspense fallback={<Loader />}>
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
             </Suspense>
           }></Route>
 
