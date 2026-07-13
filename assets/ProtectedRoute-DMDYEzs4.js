@@ -1,1 +1,0 @@
-import{i as e,t}from"./index-DDwoxJcB.js";var n=t();function r({children:t}){return localStorage.getItem(`adminToken`)?t:(0,n.jsx)(e,{to:`/login`})}export{r as default};
