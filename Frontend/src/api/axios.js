@@ -3,8 +3,8 @@ import { Meta } from "react-router-dom";
 
 
 const API = axios.create({
-    // baseURL: import.meta.env.VITE_BASE_URL + "/api"
-    baseURL:"http://localhost:5000/api"
+    baseURL: import.meta.env.VITE_API_URL + "/api"
+    // baseURL:"http://localhost:5000/api"
 });
 
 

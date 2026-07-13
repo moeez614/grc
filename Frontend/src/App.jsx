@@ -1,6 +1,7 @@
 import { useState, lazy, Suspense } from 'react'
 import './App.css'
 import { HashRouter, Route, Routes } from 'react-router-dom'
+import MemberManagement from './Layouts/MemberManagement.jsx'
 // Routes
 const ProtectedRoute = lazy(() => import('./Routes/ProtectedRoute.jsx'))
 // loader
@@ -22,8 +23,9 @@ const SpecialDesc = lazy(() => import('./Events/SpecialDesc.jsx'))
 // Components
 const PrivacyPolicy = lazy(() => import('./Components/PrivacyPolicy.jsx'))
 const TermCondition = lazy(() => import('./Components/TermCondition.jsx'))
-
-
+// Layout
+const MembersManagement = lazy(() => import('./Layouts/MemberManagement.jsx'))
+const SponsorManagement = lazy(() => import('./Layouts/SponsorManagement.jsx'))
 function App() {
 
   return (
@@ -92,7 +94,15 @@ function App() {
                 <Dashboard />
               </ProtectedRoute>
             </Suspense>
-          }></Route>
+          }>
+            <Route path='membermanagement' element={
+            <Suspense fallback={<Loader />}>
+              <MembersManagement />
+            </Suspense>
+              } ></Route>
+            <Route path='sponsors-management' element={<SponsorManagement />} ></Route>
+
+          </Route>
 
         </Routes>
       </HashRouter>
