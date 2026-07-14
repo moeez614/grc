@@ -1,0 +1,1 @@
+import{t as e}from"./jsx-runtime-CIxEorsV.js";import{Q as t}from"./index-XdD7TY8O.js";var n=e();function r({children:e}){return localStorage.getItem(`adminToken`)?e:(0,n.jsx)(t,{to:`/login`})}export{r as default};
