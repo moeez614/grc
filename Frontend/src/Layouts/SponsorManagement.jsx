@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import {
     FaHandshake,
     FaCheckCircle,
@@ -15,7 +15,9 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
-
+import api from "../api/axiosSponsor.js";
+import Swal from "sweetalert2";
+import toast from "react-hot-toast";
 
 export default function SponsorManagement() {
     const colors = {
@@ -77,46 +79,12 @@ export default function SponsorManagement() {
 
         saveAs(file, "Sponsors.xlsx");
     };
-
     const [search, setSearch] = useState("");
     const [filter, setFilter] = useState("All");
     const [showForm, setShowForm] = useState(false);
     const [selectedSponsor, setSelectedSponsor] = useState(null);
-
-    const [sponsors] = useState([
-        {
-            id: 1,
-            name: "Nike Pakistan",
-            category: "Title Sponsor",
-            logo: "https://via.placeholder.com/60",
-            website: "www.nike.com",
-            isActive: true,
-        },
-        {
-            id: 2,
-            name: "Pepsi",
-            category: "Gold Sponsor",
-            logo: "https://via.placeholder.com/60",
-            website: "www.pepsi.com",
-            isActive: true,
-        },
-        {
-            id: 3,
-            name: "Nestle",
-            category: "Nutrition Partner",
-            logo: "https://via.placeholder.com/60",
-            website: "www.nestle.com",
-            isActive: false,
-        },
-        {
-            id: 4,
-            name: "HBL",
-            category: "Banking Partner",
-            logo: "https://via.placeholder.com/60",
-            website: "www.hbl.com",
-            isActive: true,
-        },
-    ]);
+    const [loading, setLoading] = useState(false);
+    const [sponsors, setSponsors] = useState([]);
 
     const filteredSponsors = useMemo(() => {
         return sponsors.filter((sponsor) => {
@@ -138,6 +106,58 @@ export default function SponsorManagement() {
     const total = sponsors.length;
     const active = sponsors.filter((s) => s.isActive).length;
     const inactive = total - active;
+    console.log(api)
+
+    const getSponsors = async () => {
+
+        try {
+
+            setLoading(true);
+
+            const { data } = await api.get("/sponsors");
+
+            setSponsors(data);
+
+        } catch (err) {
+
+            console.log(err);
+
+            toast.error("Failed to load sponsors");
+
+        } finally {
+
+            setLoading(false);
+
+        }
+
+    };
+    const deleteSponsor = async (id) => {
+        const result = await Swal.fire({
+
+            title: "Delete Sponsor?",
+            text: "This action cannot be undone",
+            icon: "warning",
+            showCancelButton: true
+
+        });
+        if (!result.isConfirmed)
+            return;
+
+        try {
+            await api.delete(`/sponsors/${id}`);
+            toast.success("Sponsor deleted");
+            getSponsors();
+        }
+        catch (err) {
+            console.log(err);
+        }
+
+    }
+    useEffect(() => {
+
+        getSponsors();
+
+    }, []);
 
     return (
         <div
@@ -192,7 +212,7 @@ export default function SponsorManagement() {
                     }}
                     onClick={() => {
                         setSelectedSponsor(null);   // Add mode
-                        setShowForm(true);
+                        setShowForm(true)
                     }}
                 >
                     <FaPlus />
@@ -375,12 +395,23 @@ export default function SponsorManagement() {
                     </thead>
 
                     <tbody>
+                        {loading && (
+                            <tr>
+                                <td colSpan="6" style={{ textAlign: "center", padding: 30 }}>
+                                    Loading sponsors...
+                                </td>
+                            </tr>
+                        )}
                         {filteredSponsors.map((sponsor) => (
-                            <tr key={sponsor.id}>
+                            <tr key={sponsor._id || sponsor.id}>
+                                {/* your existing td code */}
                                 <td style={td}>
                                     <img
-                                        src={sponsor.logo}
-                                        alt=""
+                                        src={
+                                            sponsor.logo ||
+                                            "https://via.placeholder.com/55"
+                                        }
+                                        alt={sponsor.name}
                                         style={{
                                             width: 55,
                                             height: 55,
@@ -393,7 +424,23 @@ export default function SponsorManagement() {
 
                                 <td style={td}>{sponsor.category}</td>
 
-                                <td style={td}>{sponsor.website}</td>
+                                <td style={td}>
+
+                                    <a
+                                        href={sponsor.website}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        style={{
+                                            color: colors.secondary,
+                                            textDecoration: "none"
+                                        }}
+                                    >
+
+                                        {sponsor.website}
+
+                                    </a>
+
+                                </td>
 
                                 <td style={td}>
                                     <span
@@ -431,7 +478,7 @@ export default function SponsorManagement() {
                                                 cursor: "pointer",
                                             }}
                                             onClick={() => {
-                                                setSelectedSponsor(sponsor);   // Edit mode
+                                                setSelectedSponsor(sponsor);
                                                 setShowForm(true);
                                             }}
                                         >
@@ -448,24 +495,19 @@ export default function SponsorManagement() {
                                                 borderRadius: 8,
                                                 cursor: "pointer",
                                             }}
+                                            onClick={() => deleteSponsor(sponsor._id)}
                                         >
                                             <FaTrash />
                                         </button>
                                     </div>
                                 </td>
+
                             </tr>
                         ))}
 
-                        {filteredSponsors.length === 0 && (
+                        {!loading && filteredSponsors.length === 0 && (
                             <tr>
-                                <td
-                                    colSpan={6}
-                                    style={{
-                                        padding: 30,
-                                        textAlign: "center",
-                                        color: "#888",
-                                    }}
-                                >
+                                <td colSpan={6} style={{ padding: 30, textAlign: "center" }}>
                                     No sponsors found.
                                 </td>
                             </tr>
@@ -478,13 +520,51 @@ export default function SponsorManagement() {
                     <SponsorForm
                         sponsor={selectedSponsor}
                         onClose={() => setShowForm(false)}
-                        onSave={(data) => {
-                            console.log(data);
+                        onSave={async (form) => {
 
-                            // axios.post(...)
-                            // axios.put(...)
+                            const formData = new FormData();
+
+                            formData.append("name", form.sponsorName);
+                            formData.append("category", form.category);
+                            formData.append("website", form.website);
+                            formData.append("collaboration", form.collaboration);
+                            formData.append("description", form.description);
+                            formData.append("isActive", form.isActive);
+
+                            if (form.logo) {
+                                formData.append("logo", form.logo);
+                            }
+
+                            if (selectedSponsor) {
+
+                                await api.put(
+                                    `/sponsors/${selectedSponsor._id}`,
+                                    formData,
+                                    {
+                                        headers: {
+                                            "Content-Type": "multipart/form-data"
+                                        }
+                                    }
+                                );
+
+                            } else {
+
+                                await api.post(
+                                    "/sponsors",
+                                    formData,
+                                    {
+                                        headers: {
+                                            "Content-Type": "multipart/form-data"
+                                        }
+                                    }
+                                );
+
+                            }
+
+                            getSponsors();
 
                             setShowForm(false);
+
                         }}
                     />
                 )

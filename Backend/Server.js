@@ -11,6 +11,7 @@ app.use(express.json());
 
 import adminRoutes from "./routes/adminRoutes.js";
 import memberRoutes from "./routes/memberRoutes.js";
+import sponsorRoutes from "./routes/sponsorRoute.js";
 
 mongoose.connect(process.env.MONGO_URI)
 .then(() => {
@@ -21,6 +22,8 @@ mongoose.connect(process.env.MONGO_URI)
 });
 
 
+app.use("/uploads", express.static("uploads"));
+app.use("/api/sponsors", sponsorRoutes);
 
 app.use("/api/admin",adminRoutes);
 app.use("/uploads",express.static("uploads"));

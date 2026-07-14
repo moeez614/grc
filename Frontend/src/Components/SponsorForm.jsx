@@ -44,7 +44,9 @@ export default function SponsorForm({
                 logo: null,
             }
     );
-    const [preview, setPreview] = useState("");
+    const [preview, setPreview] = useState(
+    sponsor?.logo || ""
+);
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -68,13 +70,25 @@ export default function SponsorForm({
         setPreview(URL.createObjectURL(file));
     };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
+   const handleSubmit = async (e) => {
+    e.preventDefault();
 
-        console.log(form);
+    if (!form.sponsorName || !form.category) {
+        alert("Sponsor name and category are required");
+        return;
+    }
 
-        // axios.post("/api/sponsors", form)
-    };
+    try {
+
+        await onSave(form);
+
+    } catch (error) {
+
+        console.log(error);
+
+    }
+
+};
     return (
         <div
             style={{
@@ -347,7 +361,6 @@ export default function SponsorForm({
                                 alignItems: "center",
                                 gap: 8,
                             }}
-                            // onClick={() => window.history.back()}
                             onClick={() => onClose?.()}
                         >
                             <FaTimes />
