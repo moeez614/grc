@@ -1,0 +1,1 @@
+import"./rolldown-runtime-QTnfLwEv.js";import{n as e,u as t}from"./index-C-QF97R_.js";t();var n=e(),r=()=>(0,n.jsx)(`div`,{children:`helo events`});export{r as default};
