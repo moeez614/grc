@@ -25,7 +25,7 @@ const links = [
     },
     {
         name: "Events Management",
-        path: "/admin/events",
+        path: "event-management",
         icon: <FaRunning />,
     },
     {

@@ -25,6 +25,7 @@ const TermCondition = lazy(() => import('./Components/TermCondition.jsx'))
 // Layout
 const MembersManagement = lazy(() => import('./Layouts/MemberManagement.jsx'))
 const SponsorManagement = lazy(() => import('./Layouts/SponsorManagement.jsx'))
+const EventManagement = lazy(() => import('./Layouts/EventManagement.jsx'))
 function App() {
 
   return (
@@ -100,6 +101,7 @@ function App() {
               </Suspense>
             } ></Route>
             <Route path='sponsors-management' element={<SponsorManagement />} ></Route>
+            <Route path='event-management' element={<EventManagement />} ></Route>
 
           </Route>
 
