@@ -6,31 +6,21 @@ export default function SponsorForm({
     onSave,
     onClose,
 }) {
-    const colors = {
+
+     const colors = {
         primary: "#1B2F51",
         secondary: "#2BC4DA",
         accent: "#ED2974",
         white: "#FFFFFF",
-        background: "#F5F7FB",
+        background: "#F4F7FB",
         border: "#E5E7EB",
     };
-    // const [form, setForm] = useState({
-    //   sponsorName: "",
-    //   category: "",
-    //   website: "",
-    //   collaboration: "",
-    //   description: "",
-    //   isActive: true,
-    //   logo: null,
-    // });
     const [form, setForm] = useState(
         sponsor
             ? {
                 sponsorName: sponsor.name,
                 category: sponsor.category,
                 website: sponsor.website,
-                collaboration: sponsor.collaboration || "",
-                description: sponsor.description || "",
                 isActive: sponsor.isActive,
                 logo: sponsor.logo,
             }
@@ -38,14 +28,12 @@ export default function SponsorForm({
                 sponsorName: "",
                 category: "",
                 website: "",
-                collaboration: "",
-                description: "",
                 isActive: true,
                 logo: null,
             }
     );
     const [preview, setPreview] = useState(
-    sponsor?.logo || ""
+    `${import.meta.env.VITE_API_URL}/uploads/${sponsor?.logo}` || ""
 );
 
     const handleChange = (e) => {
@@ -106,12 +94,10 @@ export default function SponsorForm({
         >
             <div
                 style={{
-                    // width: 850,
-                    // margin: "0 auto",
                     width: 850,
                     maxHeight: "90vh",
                     overflowY: "auto",
-                    background: colors.white,
+                    background: "white",
                     borderRadius: 12,
                     padding: 30,
                     boxShadow: "0 5px 15px rgba(0,0,0,.08)",
@@ -157,22 +143,13 @@ export default function SponsorForm({
                         >
                             <option value="">Select Category</option>
 
+                            <option>Sponsor</option>
                             <option>Title Sponsor</option>
-
-                            <option>Gold Sponsor</option>
-
-                            <option>Silver Sponsor</option>
-
-                            <option>Bronze Sponsor</option>
-
-                            <option>Banking Partner</option>
-
+                            <option>Collaboration</option>
+                            <option>Supporting Partner</option>
                             <option>Nutrition Partner</option>
-
                             <option>Medical Partner</option>
-
                             <option>Media Partner</option>
-
                             <option>Community Partner</option>
                         </select>
                     </div>
@@ -183,59 +160,12 @@ export default function SponsorForm({
                         <label style={label}>Website</label>
 
                         <input
-                            type="url"
+                            type="text"
                             name="website"
                             value={form.website}
                             onChange={handleChange}
                             placeholder="https://example.com"
                             style={input}
-                        />
-                    </div>
-
-                    {/* Collaboration */}
-
-                    <div style={{ marginBottom: 20 }}>
-                        <label style={label}>Collaboration Type</label>
-
-                        <select
-                            name="collaboration"
-                            value={form.collaboration}
-                            onChange={handleChange}
-                            style={input}
-                        >
-                            <option value="">Select</option>
-
-                            <option>Financial</option>
-
-                            <option>Event Partner</option>
-
-                            <option>Nutrition Support</option>
-
-                            <option>Medical Support</option>
-
-                            <option>Media Coverage</option>
-
-                            <option>Equipment Support</option>
-
-                            <option>Venue Support</option>
-                        </select>
-                    </div>
-
-                    {/* Description */}
-
-                    <div style={{ marginBottom: 20 }}>
-                        <label style={label}>Description</label>
-
-                        <textarea
-                            name="description"
-                            rows={4}
-                            value={form.description}
-                            onChange={handleChange}
-                            placeholder="Write sponsor details..."
-                            style={{
-                                ...input,
-                                resize: "none",
-                            }}
                         />
                     </div>
 
@@ -267,6 +197,11 @@ export default function SponsorForm({
                                 {preview ? (
                                     <img
                                         src={preview}
+                                        // src={
+                                        //     sponsor.logo
+                                        //         ? `${import.meta.env.VITE_API_URL}/uploads/${sponsor.logo}`
+                                        //         : "https://via.placeholder.com/55"
+                                        // }
                                         alt=""
                                         style={{
                                             width: "100%",

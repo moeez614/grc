@@ -1,4 +1,6 @@
 import Sponsor from "../models/Sponsor.js";
+import fs from "fs";
+import path from "path";
 
 export const getSponsors = async(req,res)=>{
 
@@ -53,14 +55,47 @@ export const updateSponsor = async (req, res) => {
   }
 };
 
-export const deleteSponsor = async (req, res) => {
-  try {
-    await Sponsor.findByIdAndDelete(req.params.id);
+// export const deleteSponsor = async (req, res) => {
+//   try {
+//     await Sponsor.findByIdAndDelete(req.params.id);
 
-    res.json({
-      message: "Sponsor deleted",
-    });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
+//     res.json({
+//       message: "Sponsor deleted",
+//     });
+//   } catch (err) {
+//     res.status(500).json({ message: err.message });
+//   }
+// };
+export const deleteSponsor = async (req, res) => {
+    try {
+        const sponsor = await Sponsor.findById(req.params.id);
+
+        if (!sponsor) {
+            return res.status(404).json({
+                message: "Sponsor not found"
+            });
+        }
+
+        // Delete image from uploads folder
+        if (sponsor.logo) {
+            const imagePath = path.join(process.cwd(), "uploads", sponsor.logo);
+
+            if (fs.existsSync(imagePath)) {
+                fs.unlinkSync(imagePath);
+            }
+        }
+
+        // Delete sponsor document
+        await Sponsor.findByIdAndDelete(req.params.id);
+
+        res.json({
+            message: "Sponsor deleted successfully"
+        });
+
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({
+            message: err.message
+        });
+    }
 };

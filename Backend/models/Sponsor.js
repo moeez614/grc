@@ -17,17 +17,6 @@ const sponsorSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
-
-    collaboration: {
-      type: String,
-      default: "",
-    },
-
-    description: {
-      type: String,
-      default: "",
-    },
-
     logo: {
       type: String,
       default: "",

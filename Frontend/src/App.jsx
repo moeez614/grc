@@ -1,7 +1,6 @@
 import { useState, lazy, Suspense } from 'react'
 import './App.css'
 import { HashRouter, Route, Routes } from 'react-router-dom'
-import MemberManagement from './Layouts/MemberManagement.jsx'
 // Routes
 const ProtectedRoute = lazy(() => import('./Routes/ProtectedRoute.jsx'))
 // loader
@@ -96,10 +95,10 @@ function App() {
             </Suspense>
           }>
             <Route path='membermanagement' element={
-            <Suspense fallback={<Loader />}>
-              <MembersManagement />
-            </Suspense>
-              } ></Route>
+              <Suspense fallback={<Loader />}>
+                <MembersManagement />
+              </Suspense>
+            } ></Route>
             <Route path='sponsors-management' element={<SponsorManagement />} ></Route>
 
           </Route>

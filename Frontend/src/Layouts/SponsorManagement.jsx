@@ -106,7 +106,6 @@ export default function SponsorManagement() {
     const total = sponsors.length;
     const active = sponsors.filter((s) => s.isActive).length;
     const inactive = total - active;
-    console.log(api)
 
     const getSponsors = async () => {
 
@@ -404,18 +403,19 @@ export default function SponsorManagement() {
                         )}
                         {filteredSponsors.map((sponsor) => (
                             <tr key={sponsor._id || sponsor.id}>
-                                {/* your existing td code */}
                                 <td style={td}>
                                     <img
                                         src={
-                                            sponsor.logo ||
-                                            "https://via.placeholder.com/55"
+                                            sponsor.logo
+                                                ? `${import.meta.env.VITE_API_URL}/uploads/${sponsor.logo}`
+                                                : "https://via.placeholder.com/55"
                                         }
                                         alt={sponsor.name}
                                         style={{
                                             width: 55,
                                             height: 55,
                                             borderRadius: 8,
+                                            objectFit: "cover",
                                         }}
                                     />
                                 </td>
@@ -476,13 +476,17 @@ export default function SponsorManagement() {
                                                 height: 38,
                                                 borderRadius: 8,
                                                 cursor: "pointer",
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+                                                padding: 0,
                                             }}
                                             onClick={() => {
                                                 setSelectedSponsor(sponsor);
                                                 setShowForm(true);
                                             }}
                                         >
-                                            <FaEdit />
+                                            <FaEdit size={18}/>
                                         </button>
 
                                         <button
@@ -494,10 +498,14 @@ export default function SponsorManagement() {
                                                 height: 38,
                                                 borderRadius: 8,
                                                 cursor: "pointer",
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+                                                padding: 0,
                                             }}
                                             onClick={() => deleteSponsor(sponsor._id)}
                                         >
-                                            <FaTrash />
+                                            <FaTrash size={18}/>
                                         </button>
                                     </div>
                                 </td>
