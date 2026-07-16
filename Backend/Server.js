@@ -18,6 +18,7 @@ app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 import adminRoutes from "./routes/adminRoutes.js";
 import memberRoutes from "./routes/memberRoutes.js";
 import sponsorRoutes from "./routes/sponsorRoute.js";
+import weeklyEventRoutes from "./routes/weeklyEventRoutes.js";
 
 
 app.use("/uploads", express.static("uploads"));
@@ -26,6 +27,7 @@ app.use("/api/sponsors", sponsorRoutes);
 app.use("/api/admin",adminRoutes);
 app.use("/uploads",express.static("uploads"));
 app.use("/api/members",memberRoutes);
+app.use("/api/weekly-events",weeklyEventRoutes);
 
 // test run
 app.get("/", (req, res) => {

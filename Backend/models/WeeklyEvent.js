@@ -1,0 +1,66 @@
+import mongoose from "mongoose";
+
+
+const weeklyEventSchema = new mongoose.Schema(
+{
+    banner:{
+        type:String,
+        default:null
+    },
+
+    name:{
+        type:String,
+        required:true
+    },
+
+    date:{
+        type:Date,
+        required:true
+    },
+
+    time:{
+        type:String,
+        required:true
+    },
+
+    location:{
+        type:String,
+        required:true
+    },
+
+    distance:{
+        type:String,
+        required:true
+    },
+
+
+    status:{
+        type:String,
+        enum:[
+            "Upcoming",
+            "Completed",
+            "Cancelled"
+        ],
+        default:"Upcoming"
+    },
+
+
+    description:{
+        type:String,
+        default:""
+    },
+    
+    completedCounted: {
+    type: Boolean,
+    default: false,
+},
+},
+{
+    timestamps:true
+});
+
+
+export default mongoose.model(
+    "WeeklyEvent",
+    weeklyEventSchema
+);

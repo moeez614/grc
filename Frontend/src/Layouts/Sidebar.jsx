@@ -2,6 +2,7 @@
 import React from 'react'
 import { NavLink } from "react-router-dom";
 import Logoo from '../assets/grc-logo.webp'
+import { useState } from "react";
 import {
     FaChartPie,
     FaUsers,
@@ -51,6 +52,7 @@ const links = [
 ];
 
 const Sidebar = () => {
+    const [openEvents, setOpenEvents] = useState(false);
     return (
         <div>
             <aside
@@ -64,7 +66,7 @@ const Sidebar = () => {
                     position: "fixed",
                     left: 0,
                     top: 0,
-                    padding: "20px 12px",
+                    padding: "12px",
                     boxSizing: "border-box",
                 }}
             >
@@ -75,6 +77,7 @@ const Sidebar = () => {
                     padding: "12px",
                     textAlign: "center",
                     gap: "10px",
+                    marginBottom: "20px"
                 }}>
 
                     <img src={Logoo} alt="Grc Logo" loading="lazy" width={70} height={70} />
@@ -97,7 +100,7 @@ const Sidebar = () => {
                         gap: "8px",
                     }}
                 >
-                    {links.map((item) => (
+                    {/* {links.map((item) => (
                         <NavLink
                             key={item.path}
                             to={item.path}
@@ -118,6 +121,91 @@ const Sidebar = () => {
                             <span style={{ fontSize: "16px" }}>{item.icon}</span>
                             <span>{item.name}</span>
                         </NavLink>
+                    ))} */}
+                    {links.map((item) => (
+                        <React.Fragment key={item.name}>
+                            {item.name === "Events Management" ? (
+                                <>
+                                    <div
+                                        onClick={() => setOpenEvents(!openEvents)}
+                                        style={{
+                                            display: "flex",
+                                            alignItems: "center",
+                                            gap: "10px",
+                                            padding: "12px",
+                                            borderRadius: "8px",
+                                            cursor: "pointer",
+                                            color: "#E8E8E8",
+                                            fontWeight: "500",
+                                            fontSize: "14px",
+                                        }}
+                                    >
+                                        <span style={{ fontSize: "16px" }}>{item.icon}</span>
+                                        <span style={{ flex: 1 }}>{item.name}</span>
+                                        <span>{openEvents ? "▲" : "▼"}</span>
+                                    </div>
+
+                                    {openEvents && (
+                                        <div
+                                            style={{
+                                                display: "flex",
+                                                flexDirection: "column",
+                                                marginLeft: "28px",
+                                                gap: "6px",
+                                            }}
+                                        >
+                                            <NavLink
+                                                to="event-management/weekly-events"
+                                                style={({ isActive }) => ({
+                                                    padding: "8px 12px",
+                                                    borderRadius: "6px",
+                                                    textDecoration: "none",
+                                                    color: isActive ? "#fff" : "#E8E8E8",
+                                                    background: isActive ? "#ED2974" : "transparent",
+                                                    fontSize: "13px",
+                                                })}
+                                            >
+                                                Weekly Events
+                                            </NavLink>
+
+                                            <NavLink
+                                                to="event-management/annual-events"
+                                                style={({ isActive }) => ({
+                                                    padding: "8px 12px",
+                                                    borderRadius: "6px",
+                                                    textDecoration: "none",
+                                                    color: isActive ? "#fff" : "#E8E8E8",
+                                                    background: isActive ? "#ED2974" : "transparent",
+                                                    fontSize: "13px",
+                                                })}
+                                            >
+                                                Annual Events
+                                            </NavLink>
+                                        </div>
+                                    )}
+                                </>
+                            ) : (
+                                <NavLink
+                                    to={item.path}
+                                    style={({ isActive }) => ({
+                                        display: "flex",
+                                        alignItems: "center",
+                                        gap: "10px",
+                                        padding: "12px",
+                                        borderRadius: "8px",
+                                        textDecoration: "none",
+                                        color: isActive ? "#fff" : "#E8E8E8",
+                                        background: isActive ? "#ED2974" : "transparent",
+                                        fontWeight: isActive ? "600" : "500",
+                                        transition: "0.3s",
+                                        fontSize: "14px",
+                                    })}
+                                >
+                                    <span style={{ fontSize: "16px" }}>{item.icon}</span>
+                                    <span>{item.name}</span>
+                                </NavLink>
+                            )}
+                        </React.Fragment>
                     ))}
                 </nav>
 
@@ -130,7 +218,7 @@ const Sidebar = () => {
                         paddingTop: "20px",
                     }}
                 >
-                    © 2026 Gojra Running Club
+                    GRC v1.0.0
                 </div>
             </aside>
         </div>

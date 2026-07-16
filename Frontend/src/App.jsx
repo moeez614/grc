@@ -26,6 +26,9 @@ const TermCondition = lazy(() => import('./Components/TermCondition.jsx'))
 const MembersManagement = lazy(() => import('./Layouts/MemberManagement.jsx'))
 const SponsorManagement = lazy(() => import('./Layouts/SponsorManagement.jsx'))
 const EventManagement = lazy(() => import('./Layouts/EventManagement.jsx'))
+const AnnualEvents = lazy(() => import('./Layouts/AnnualEvents.jsx'))
+const WeeklyEvents = lazy(() => import('./Layouts/WeeklyEvents.jsx'))
+
 function App() {
 
   return (
@@ -101,7 +104,10 @@ function App() {
               </Suspense>
             } ></Route>
             <Route path='sponsors-management' element={<SponsorManagement />} ></Route>
-            <Route path='event-management' element={<EventManagement />} ></Route>
+            <Route path='event-management' element={<EventManagement />} >
+              <Route path='weekly-events' element={<WeeklyEvents />}></Route>
+              <Route path='annual-events' element={<AnnualEvents />}></Route>
+            </Route>
 
           </Route>
 
