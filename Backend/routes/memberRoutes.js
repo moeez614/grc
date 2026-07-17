@@ -1,7 +1,8 @@
 import express from "express";
 import multer from "multer";
 import Member from "../models/Member.js";
-
+import fs from "fs";
+import path from "path";
 
 const router = express.Router();
 
@@ -76,9 +77,9 @@ router.post(
 
 
             const member = await Member.create({
-
+                memberId: req.body.memberId,
                 name: req.body.name,
-
+                email: req.body.email,
                 title: req.body.title,
 
                 isActive:
@@ -103,12 +104,18 @@ router.post(
 
         }
         catch (error) {
+            if (error.code === 11000) {
 
-
-            res.status(500)
-                .json({
-                    message: error.message
+                return res.status(400).json({
+                    message: "Member ID or Email already exists"
                 });
+
+            }
+
+
+            res.status(500).json({
+                message: error.message
+            });
 
 
         }
@@ -131,6 +138,7 @@ router.put(
                 return res.status(404).json({ message: "Member not found" });
 
             member.name = req.body.name;
+            member.email = req.body.email;
             member.title = req.body.title;
             member.isActive = req.body.isActive === "true";
 
@@ -154,36 +162,44 @@ router.put(
 router.delete(
     "/:id",
     async (req, res) => {
+try {
 
+        const member = await Member.findById(req.params.id);
 
-        try {
+        if (!member) {
 
-
-            await Member.findByIdAndDelete(
-                req.params.id
-            );
-
-
-            res.json({
-
-                message: "Member deleted"
-
+            return res.status(404).json({
+                message: "Member not found"
             });
 
-
-        }
-        catch (error) {
-
-
-            res.status(500)
-                .json({
-                    message: error.message
-                });
-
-
         }
 
+        // Delete image
+        if (member.photo) {
 
+            const imagePath = path.join(process.cwd(), member.photo);
+
+            if (fs.existsSync(imagePath)) {
+
+                fs.unlinkSync(imagePath);
+
+            }
+
+        }
+
+        await Member.findByIdAndDelete(req.params.id);
+
+        res.json({
+            message: "Member deleted successfully"
+        });
+
+    } catch (error) {
+
+        res.status(500).json({
+            message: error.message
+        });
+
+    }
     });
 
 

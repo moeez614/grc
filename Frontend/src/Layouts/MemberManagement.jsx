@@ -9,10 +9,10 @@ import {
     FaEdit,
     FaTrash,
 } from "react-icons/fa";
-import MemberModel from '../Components/MemberModel'
+import MemberModal from '../Components/MemberModal'
 import MemberActions from '../Components/MemberActions'
 import axios from "axios";
-
+import Swal from "sweetalert2";
 export default function MemberManagement() {
     const API = `${import.meta.env.VITE_API_URL}/api/members`;
     const colors = {
@@ -62,9 +62,16 @@ export default function MemberManagement() {
     const inactive = total - active;
 
     const handleDelete = async (id) => {
-
-        if (!window.confirm("Delete this member?"))
-            return;
+         const result = await Swal.fire({
+        title: "Delete Member?",
+        text: "This member will be permanently deleted.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#ED2974",
+        cancelButtonColor: "#6c757d",
+        confirmButtonText: "Yes, Delete",
+    });
+    if (!result.isConfirmed) return;
 
 
         try {
@@ -79,12 +86,22 @@ export default function MemberManagement() {
                     member => member._id !== id
                 )
             );
-
-
+            Swal.fire({
+            icon: "success",
+            title: "Deleted",
+            text: "Member deleted successfully.",
+            timer: 1500,
+            showConfirmButton: false,
+        });
         }
         catch (error) {
 
             console.log(error);
+            Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: error.response?.data?.message || "Delete failed",
+        });
 
         }
 
@@ -270,6 +287,7 @@ export default function MemberManagement() {
                 members={members}
                 onDelete={handleDelete}
 
+
             />
             {/* Table */}
 
@@ -295,7 +313,9 @@ export default function MemberManagement() {
                     >
                         <tr>
                             <th style={th}>Photo</th>
+                            <th style={th}>Member ID</th>
                             <th style={th}>Name</th>
+                            <th style={th}>Email</th>
                             <th style={th}>Title</th>
                             <th style={th}>Status</th>
                             <th style={th}>Actions</th>
@@ -321,8 +341,14 @@ export default function MemberManagement() {
                                         }}
                                     />
                                 </td>
+                                <td style={td}>
+                                    {member.memberId}
+                                </td>
 
                                 <td style={td}>{member.name}</td>
+                                <td style={td}>
+                                        {member.email}
+                                </td>
 
                                 <td style={td}>{member.title}</td>
 
@@ -389,7 +415,7 @@ export default function MemberManagement() {
                         {currentMembers.length === 0 && (
                             <tr>
                                 <td
-                                    colSpan={5}
+                                    colSpan={7}
                                     style={{
                                         textAlign: "center",
                                         padding: 35,
@@ -447,13 +473,17 @@ export default function MemberManagement() {
                     </button>
                 </div>
             </div>
-            <MemberModel
+            <MemberModal
                 isOpen={showModal}
+
                 onClose={() => {
                     setShowModal(false);
                     setEditMember(null);
                 }}
+
                 editMember={editMember}
+
+                members={members}
                 onSave={async (data) => {
 
 
@@ -467,7 +497,16 @@ export default function MemberManagement() {
                             "name",
                             data.name
                         );
+                        formData.append(
+                            "email",
+                            data.email
+                        );
 
+
+                        formData.append(
+                            "memberId",
+                            data.memberId
+                        );
 
                         formData.append(
                             "title",
@@ -481,7 +520,7 @@ export default function MemberManagement() {
                         );
 
 
-                        if (data.photo) {
+                        if (data.photo instanceof File) {
 
                             formData.append(
                                 "photo",
