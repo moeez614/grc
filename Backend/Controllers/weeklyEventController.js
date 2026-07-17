@@ -1,59 +1,8 @@
 import WeeklyEvent from "../models/WeeklyEvent.js";
 import EventStatistics from "../models/EventStatistics.js";
+import fs from "fs";
+import path from "path";
 
-// const updateEventStatuses = async () => {
-//     const now = new Date();
-
-//     const events = await WeeklyEvent.find();
-
-//     for (const event of events) {
-
-//         // Combine event date and time
-//         if (!event.date || !event.time) continue;
-
-//         const eventDateTime = new Date(
-//             `${event.date.toISOString().split("T")[0]}T${event.time}:00`
-//         );
-
-//         let newStatus = event.status;
-
-//         if (newStatus !== "Cancelled") {
-//             if (eventDateTime <= now) {
-//                 newStatus = "Completed";
-//             } else {
-//                 newStatus = "Upcoming";
-//             }
-//         }
-
-//         if (newStatus !== event.status) {
-
-//             // Increase completed count only once
-//             if (
-//                 newStatus === "Completed" &&
-//                 !event.completedCounted
-//             ) {
-//                 await EventStatistics.findOneAndUpdate(
-//                     {},
-//                     {
-//                         $inc: {
-//                             completedEvents: 1
-//                         }
-//                     },
-//                     {
-//                         upsert: true,
-//                         new: true
-//                     }
-//                 );
-
-//                 event.completedCounted = true;
-//             }
-//             if (event.status !== newStatus) {
-//                 event.status = newStatus;
-//             }
-//             await event.save();
-//         }
-//     }
-// };
 const updateEventStatuses = async () => {
 
     const now = new Date();
@@ -248,19 +197,33 @@ export const deleteWeeklyEvent = async (req, res) => {
 
     try {
 
+        const event = await WeeklyEvent.findById(req.params.id);
 
-        await WeeklyEvent.findByIdAndDelete(
-            req.params.id
-        );
+        if (!event) {
+            return res.status(404).json({
+                message: "Event not found"
+            });
+        }
 
+        // Delete banner image if it exists
+        if (event.banner) {
 
-        // DO NOT decrease completed counter
+            const imagePath = path.join(
+                process.cwd(),
+                "uploads",
+                event.banner
+            );
 
+            if (fs.existsSync(imagePath)) {
+                fs.unlinkSync(imagePath);
+            }
+        }
+
+        await WeeklyEvent.findByIdAndDelete(req.params.id);
 
         res.json({
-            message: "Event deleted"
+            message: "Event deleted successfully"
         });
-
 
     }
     catch (error) {
@@ -270,7 +233,6 @@ export const deleteWeeklyEvent = async (req, res) => {
         });
 
     }
-
 
 };
 

@@ -17,6 +17,7 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import * as XLSX from "xlsx";
 import weeklyApi from "../api/weeklyEventApi.js";
+import Swal from "sweetalert2";
 
 
 export default function WeeklyEvents() {
@@ -108,42 +109,6 @@ export default function WeeklyEvents() {
         }
 
     };
-    // const handleSave = async (data) => {
-
-    //     try {
-
-    //         if (editingEvent) {
-
-    //             await weeklyApi.put(
-    //                 `/${editingEvent._id}`,
-    //                 data
-    //             );
-
-    //         }
-    //         else {
-
-    //             await weeklyApi.post(
-    //                 "/",
-    //                 data
-    //             );
-
-    //         }
-
-
-    //         fetchEvents();
-    //         fetchStats();
-
-    //         setShowForm(false);
-
-    //     }
-    //     catch (error) {
-
-    //         console.log(error);
-
-    //     }
-
-    // };
-
     const handleSave = async (data) => {
 
         try {
@@ -241,24 +206,43 @@ export default function WeeklyEvents() {
     };
     const deleteEvent = async (id) => {
 
+        const result = await Swal.fire({
+            title: "Delete Event?",
+            text: "This action cannot be undone.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#ED2974",
+            cancelButtonColor: "#6c757d",
+            confirmButtonText: "Yes, Delete",
+            cancelButtonText: "Cancel",
+        });
+
+        if (!result.isConfirmed) return;
+
         try {
 
-            await weeklyApi.delete(
-                `/${id}`
-            );
-
+            await weeklyApi.delete(`/${id}`);
 
             fetchEvents();
             fetchStats();
 
+            Swal.fire({
+                icon: "success",
+                title: "Deleted!",
+                text: "Event has been deleted successfully.",
+                timer: 1500,
+                showConfirmButton: false,
+            });
+
+        } catch (error) {
+
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: error.response?.data?.message || "Failed to delete event.",
+            });
 
         }
-        catch (error) {
-
-            console.log(error);
-
-        }
-
     };
     const exportPDF = () => {
 
@@ -282,7 +266,7 @@ export default function WeeklyEvents() {
 
             body: filteredEvents.map((event) => [
                 event.name,
-                event.date,
+                new Date(event.date).toLocaleDateString("en-GB"),
                 event.time,
                 event.location,
                 event.distance,
@@ -297,7 +281,7 @@ export default function WeeklyEvents() {
         const worksheet = XLSX.utils.json_to_sheet(
             filteredEvents.map((event) => ({
                 "Event Name": event.name,
-                "Date": event.date,
+                "Date": new Date(event.date).toLocaleDateString("en-GB"),
                 "Time": event.time,
                 "Location": event.location,
                 "Distance": event.distance,
@@ -636,7 +620,13 @@ export default function WeeklyEvents() {
                                                 cursor: "pointer",
                                             }}
                                             onClick={() => {
-                                                setEditingEvent(event);
+                                                // setEditingEvent(event);
+                                                setEditingEvent({
+                                                    ...event,
+                                                    date: event.date
+                                                        ? new Date(event.date).toISOString().split("T")[0]
+                                                        : "",
+                                                });
                                                 setShowForm(true);
                                             }}
                                         >

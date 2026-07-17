@@ -120,15 +120,15 @@ export default function WeeklyEventForm({
                             onChange={handleImage}
                             style={inputStyle}
                         />
-<p
-  style={{
-    fontSize: "13px",
-    marginTop: "6px",
-    color: "#777",
-  }}
->
-  Recommended: Use WebP images instead of JPG, PNG, or SVG to reduce file size and improve loading speed.
-</p>
+                        <p
+                            style={{
+                                fontSize: "13px",
+                                marginTop: "6px",
+                                color: "#777",
+                            }}
+                        >
+                            Recommended: Use WebP images instead of JPG, PNG, or SVG to reduce file size and improve loading speed.
+                        </p>
 
                         {errors.banner && (
                             <p style={errorStyle}>{errors.banner.message}</p>

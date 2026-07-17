@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-
+import dbTwo from "../Config/dbTwo.js";
 
 const weeklyEventSchema = new mongoose.Schema(
 {
@@ -49,7 +49,7 @@ const weeklyEventSchema = new mongoose.Schema(
         type:String,
         default:""
     },
-    
+
     completedCounted: {
     type: Boolean,
     default: false,
@@ -60,7 +60,7 @@ const weeklyEventSchema = new mongoose.Schema(
 });
 
 
-export default mongoose.model(
+export default dbTwo.model(
     "WeeklyEvent",
     weeklyEventSchema
 );

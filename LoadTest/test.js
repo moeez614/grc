@@ -14,6 +14,6 @@ export const options = {
 };
 
 export default function () {
-  http.get("http://localhost:5000/api/members");
+  http.get("http://localhost:5000/api/weekly-events");
   sleep(1);
 }

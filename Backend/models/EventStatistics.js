@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-
+import dbTwo from "../Config/dbTwo.js";
 
 const eventStatisticsSchema = new mongoose.Schema(
 {
@@ -12,7 +12,7 @@ const eventStatisticsSchema = new mongoose.Schema(
 });
 
 
-export default mongoose.model(
+export default dbTwo.model(
     "EventStatistics",
     eventStatisticsSchema
 );

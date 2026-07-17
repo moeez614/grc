@@ -25,7 +25,6 @@ app.use("/uploads", express.static("uploads"));
 app.use("/api/sponsors", sponsorRoutes);
 
 app.use("/api/admin",adminRoutes);
-app.use("/uploads",express.static("uploads"));
 app.use("/api/members",memberRoutes);
 app.use("/api/weekly-events",weeklyEventRoutes);
 

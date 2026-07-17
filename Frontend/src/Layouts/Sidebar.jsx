@@ -73,11 +73,10 @@ const Sidebar = () => {
                 <div style={{
                     display: "flex",
                     alignItems: "center",
-                    justifyContent: "center",
-                    padding: "12px",
+                    padding: "12px 0",
                     textAlign: "center",
                     gap: "10px",
-                    marginBottom: "20px"
+                    marginBottom: "10px"
                 }}>
 
                     <img src={Logoo} alt="Grc Logo" loading="lazy" width={70} height={70} />
