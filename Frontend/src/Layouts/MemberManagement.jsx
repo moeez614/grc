@@ -33,20 +33,28 @@ export default function MemberManagement() {
     const membersPerPage = 5;
 
     const filteredMembers = useMemo(() => {
-        return members.filter((m) => {
+
+        const searchText = search.trim().toLowerCase();
+
+        return members.filter((member) => {
+
             const matchesSearch =
-                m.name.toLowerCase().includes(search.toLowerCase()) ||
-                m.title.toLowerCase().includes(search.toLowerCase());
+                member.name?.toLowerCase().includes(searchText) ||
+                member.title?.toLowerCase().includes(searchText) ||
+                member.email?.toLowerCase().includes(searchText) ||
+                member.memberId?.toLowerCase().includes(searchText);
 
             const matchesFilter =
                 filter === "All"
                     ? true
                     : filter === "Active"
-                        ? m.isActive
-                        : !m.isActive;
+                        ? member.isActive
+                        : !member.isActive;
 
             return matchesSearch && matchesFilter;
+
         });
+
     }, [members, search, filter]);
 
     const totalPages = Math.ceil(
@@ -62,16 +70,16 @@ export default function MemberManagement() {
     const inactive = total - active;
 
     const handleDelete = async (id) => {
-         const result = await Swal.fire({
-        title: "Delete Member?",
-        text: "This member will be permanently deleted.",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#ED2974",
-        cancelButtonColor: "#6c757d",
-        confirmButtonText: "Yes, Delete",
-    });
-    if (!result.isConfirmed) return;
+        const result = await Swal.fire({
+            title: "Delete Member?",
+            text: "This member will be permanently deleted.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#ED2974",
+            cancelButtonColor: "#6c757d",
+            confirmButtonText: "Yes, Delete",
+        });
+        if (!result.isConfirmed) return;
 
 
         try {
@@ -87,21 +95,21 @@ export default function MemberManagement() {
                 )
             );
             Swal.fire({
-            icon: "success",
-            title: "Deleted",
-            text: "Member deleted successfully.",
-            timer: 1500,
-            showConfirmButton: false,
-        });
+                icon: "success",
+                title: "Deleted",
+                text: "Member deleted successfully.",
+                timer: 1500,
+                showConfirmButton: false,
+            });
         }
         catch (error) {
 
             console.log(error);
             Swal.fire({
-            icon: "error",
-            title: "Error",
-            text: error.response?.data?.message || "Delete failed",
-        });
+                icon: "error",
+                title: "Error",
+                text: error.response?.data?.message || "Delete failed",
+            });
 
         }
 
@@ -255,7 +263,7 @@ export default function MemberManagement() {
 
                     <input
                         type="text"
-                        placeholder="Search by name or title..."
+                        placeholder="Search by Name, Member ID, Email or Title..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         style={{
@@ -347,7 +355,7 @@ export default function MemberManagement() {
 
                                 <td style={td}>{member.name}</td>
                                 <td style={td}>
-                                        {member.email}
+                                    {member.email}
                                 </td>
 
                                 <td style={td}>{member.title}</td>

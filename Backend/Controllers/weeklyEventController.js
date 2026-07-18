@@ -2,6 +2,8 @@ import WeeklyEvent from "../models/WeeklyEvent.js";
 import EventStatistics from "../models/EventStatistics.js";
 import fs from "fs";
 import path from "path";
+import Member from "../models/Member.js";
+import { sendReminderEmail } from "../services/emailService.js";
 
 const updateEventStatuses = async () => {
 
@@ -32,13 +34,13 @@ const updateEventStatuses = async () => {
             await EventStatistics.findOneAndUpdate(
                 {},
                 {
-                    $inc:{
-                        completedEvents:1
+                    $inc: {
+                        completedEvents: 1
                     }
                 },
                 {
-                    upsert:true,
-                    new:true
+                    upsert: true,
+                    new: true
                 }
             );
 
@@ -67,7 +69,6 @@ export const createWeeklyEvent = async (req, res) => {
             ? req.file.filename
             : null;
 
-        // const event = await WeeklyEvent.create(req.body);
         const event = await WeeklyEvent.create({
 
             name: req.body.name,
@@ -80,6 +81,43 @@ export const createWeeklyEvent = async (req, res) => {
             banner
 
         });
+        const eventDateTime = new Date(
+            `${req.body.date}T${req.body.time}`
+        );
+        const now = new Date();
+
+console.log("Now:", now);
+console.log("Event DateTime:", eventDateTime);
+
+const hoursLeft =
+    (eventDateTime.getTime() - now.getTime()) /
+    (1000 * 60 * 60);
+
+console.log("Hours left:", hoursLeft);
+
+
+        if (hoursLeft > 0 && hoursLeft <= 24) {
+
+            const members =
+                await Member.find({}, "email");
+
+            const emails =
+                members.map(m => m.email);
+
+            console.log("Hours left:", hoursLeft);
+            console.log("Event:", event.name);
+            console.log("Sending immediate reminder...");
+            await sendReminderEmail(
+                emails,
+                event
+            );
+
+
+            event.reminderSent = true;
+
+            await event.save();
+
+        }
 
         res.status(201).json({
             message: "Event created",
@@ -141,41 +179,6 @@ export const updateWeeklyEvent = async (req, res) => {
                     new: true
                 }
             );
-
-
-
-        // check status changed
-
-        if (
-            oldEvent.status !== "Completed" &&
-            updatedEvent.status === "Completed"
-        ) {
-
-
-            let stats =
-                await EventStatistics.findOne();
-
-
-            if (!stats) {
-
-                stats =
-                    await EventStatistics.create({
-                        completedEvents: 1
-                    });
-
-            }
-            else {
-
-                stats.completedEvents += 1;
-
-                await stats.save();
-
-            }
-
-
-        }
-
-
 
         res.json(updatedEvent);
 
@@ -274,7 +277,6 @@ export const getEventStats = async (req, res) => {
 
             completed:
                 stats?.completedEvents || 0
-
         });
 
 

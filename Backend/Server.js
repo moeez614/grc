@@ -7,6 +7,7 @@ import mongoose from "mongoose";
 import path from "path";
 import connectDBOne from "./Config/dbOne.js";
 import "./Config/dbTwo.js";
+import "./services/reminderScheduler.js"
 
 connectDBOne();
 // connectDB();

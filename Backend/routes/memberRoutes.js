@@ -143,6 +143,19 @@ router.put(
             member.isActive = req.body.isActive === "true";
 
             if (req.file) {
+
+                // Delete old image
+                if (member.photo) {
+
+                    const oldImagePath = path.join(process.cwd(), member.photo);
+
+                    if (fs.existsSync(oldImagePath)) {
+                        fs.unlinkSync(oldImagePath);
+                    }
+
+                }
+
+                // Save new image path
                 member.photo = req.file.path;
             }
 
@@ -162,44 +175,44 @@ router.put(
 router.delete(
     "/:id",
     async (req, res) => {
-try {
+        try {
 
-        const member = await Member.findById(req.params.id);
+            const member = await Member.findById(req.params.id);
 
-        if (!member) {
+            if (!member) {
 
-            return res.status(404).json({
-                message: "Member not found"
-            });
-
-        }
-
-        // Delete image
-        if (member.photo) {
-
-            const imagePath = path.join(process.cwd(), member.photo);
-
-            if (fs.existsSync(imagePath)) {
-
-                fs.unlinkSync(imagePath);
+                return res.status(404).json({
+                    message: "Member not found"
+                });
 
             }
 
+            // Delete image
+            if (member.photo) {
+
+                const imagePath = path.join(process.cwd(), member.photo);
+
+                if (fs.existsSync(imagePath)) {
+
+                    fs.unlinkSync(imagePath);
+
+                }
+
+            }
+
+            await Member.findByIdAndDelete(req.params.id);
+
+            res.json({
+                message: "Member deleted successfully"
+            });
+
+        } catch (error) {
+
+            res.status(500).json({
+                message: error.message
+            });
+
         }
-
-        await Member.findByIdAndDelete(req.params.id);
-
-        res.json({
-            message: "Member deleted successfully"
-        });
-
-    } catch (error) {
-
-        res.status(500).json({
-            message: error.message
-        });
-
-    }
     });
 
 

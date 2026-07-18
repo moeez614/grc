@@ -52,21 +52,6 @@ const memberSchema = new mongoose.Schema(
 }
 );
 
-
-// Prevent duplicate index warning
-memberSchema.index(
-    { memberId:1 },
-    { unique:true }
-);
-
-
-memberSchema.index(
-    { email:1 },
-    { unique:true }
-);
-
-
-
 const Member = mongoose.model(
     "Member",
     memberSchema

@@ -8,7 +8,7 @@ const secondDB = mongoose.createConnection(
 );
 
 secondDB.on("connected", () => {
-    console.log("Second MongoDB Connected");
+    console.log("2️⃣ Second MongoDB Connected");
 });
 
 secondDB.on("error", (error) => {

@@ -29,25 +29,32 @@ export default function MemberActions({ members, onDelete }) {
         );
 
 
-        const tableData = members.map((member, index) => [
-            index + 1,
+        const tableData = members.map((member) => [
+            member.memberId,
             member.name,
+            member.email,
             member.title,
             member.isActive ? "Active" : "Inactive"
         ]);
 
-
         autoTable(doc, {
             startY: 30,
-            head: [
-                [
-                    "ID",
-                    "Name",
-                    "Title",
-                    "Status"
-                ]
-            ],
-            body: tableData
+            head: [[
+                "Member ID",
+                "Name",
+                "Email",
+                "Title",
+                "Status"
+            ]],
+            body: tableData,
+            styles: {
+                fontSize: 10,
+                cellPadding: 3,
+            },
+            headStyles: {
+                fillColor: [27, 47, 81], // #1B2F51
+                textColor: 255,
+            },
         });
 
 
@@ -59,15 +66,12 @@ export default function MemberActions({ members, onDelete }) {
     // Export Excel
     const exportExcel = () => {
 
-        const data = members.map((member, index) => ({
-
-            ID: index + 1,
+        const data = members.map((member) => ({
+            "Member ID": member.memberId,
             Name: member.name,
+            Email: member.email,
             Title: member.title,
-            Status: member.isActive
-                ? "Active"
-                : "Inactive"
-
+            Status: member.isActive ? "Active" : "Inactive"
         }));
 
 
