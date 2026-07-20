@@ -45,6 +45,11 @@ const links = [
         icon: <FaHandshake />,
     },
     {
+        name: "Attendence Management",
+        path: "attendence-management",
+        icon: <FaHandshake />,
+    },
+    {
         name: "Settings",
         path: "/admin/settings",
         icon: <FaCog />,

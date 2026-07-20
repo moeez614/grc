@@ -28,6 +28,7 @@ const SponsorManagement = lazy(() => import('./Layouts/SponsorManagement.jsx'))
 const EventManagement = lazy(() => import('./Layouts/EventManagement.jsx'))
 const AnnualEvents = lazy(() => import('./Layouts/AnnualEvents.jsx'))
 const WeeklyEvents = lazy(() => import('./Layouts/WeeklyEvents.jsx'))
+const Attendence = lazy(() => import('./Layouts/Attendence.jsx'))
 
 function App() {
 
@@ -108,6 +109,7 @@ function App() {
               <Route path='weekly-events' element={<WeeklyEvents />}></Route>
               <Route path='annual-events' element={<AnnualEvents />}></Route>
             </Route>
+            <Route path='attendence-management' element={<Attendence />}></Route>
 
           </Route>
 
