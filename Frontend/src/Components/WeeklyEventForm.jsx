@@ -25,14 +25,7 @@ export default function WeeklyEventForm({
     };
 
     const [preview, setPreview] = useState(defaultValues.banner || null);
-
-    // const {
-    //     register,
-    //     handleSubmit,
-    //     formState: { errors },
-    // } = useForm({
-    //     defaultValues,
-    // });
+    const [loading, setLoading] = useState(false);
     const {
         register,
         handleSubmit,
@@ -85,6 +78,12 @@ export default function WeeklyEventForm({
                 boxSizing: "border-box",
             }}
         >
+            <style>{`
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+`}</style>
             <div
                 style={{
                     width: "100%",
@@ -105,7 +104,15 @@ export default function WeeklyEventForm({
                     {isEdit ? "Edit Weekly Event" : "Add Weekly Event"}
                 </h2>
 
-                <form onSubmit={handleSubmit(onSubmit)}>
+                <form
+                    onSubmit={handleSubmit(async (data) => {
+                        try {
+                            setLoading(true);
+                            await onSubmit(data);
+                        } finally {
+                            setLoading(false);
+                        }
+                    })}>
                     {/* Banner */}
 
                     <div style={{ marginBottom: 25 }}>
@@ -338,7 +345,7 @@ export default function WeeklyEventForm({
                             <FaTimes /> Cancel
                         </button>
 
-                        <button
+                        {/* <button
                             type="submit"
                             style={{
                                 padding: "12px 25px",
@@ -350,6 +357,47 @@ export default function WeeklyEventForm({
                             }}
                         >
                             <FaSave /> {isEdit ? "Update Event" : "Save Event"}
+                        </button> */}
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            style={{
+                                padding: "12px 25px",
+                                background: loading ? "#999" : colors.accent,
+                                color: "#fff",
+                                border: "none",
+                                borderRadius: "8px",
+                                cursor: loading ? "not-allowed" : "pointer",
+                                opacity: loading ? 0.7 : 1,
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "8px",
+                            }}
+                        >
+                            {loading && (
+                                <span
+                                    style={{
+                                        width: "16px",
+                                        height: "16px",
+                                        border: "2px solid rgba(255,255,255,0.4)",
+                                        borderTop: "2px solid #fff",
+                                        borderRadius: "50%",
+                                        display: "inline-block",
+                                        animation: "spin 1s linear infinite",
+                                    }}
+                                />
+                            )}
+
+                            {
+                                loading ? (
+                                    "Saving..."
+                                ) : (
+                                    <>
+                                        <FaSave />
+                                        {isEdit ? " Update Event" : " Save Event"}
+                                    </>
+                                )
+                            }
                         </button>
                     </div>
                 </form>

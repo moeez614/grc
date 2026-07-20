@@ -47,11 +47,21 @@ export const sendReminderEmail = async (emails, event) => {
 
     <tr>
         <td style="background:#1B2F51;padding:30px;text-align:center;color:white;">
-            <h1 style="margin:0;">🏃 GOJRA RUNNING CLUB</h1>
+            <h1 style="margin:0;"> GOJRA RUNNING CLUB</h1>
             <p style="margin-top:10px;color:#2BC4DA;">
                 Event Reminder • 24 Hours Remaining
             </p>
         </td>
+        ${event.banner
+                    ? `
+            <img
+                src="${process.env.BASE_URL}/uploads/${event.banner}"
+                alt="${event.name}"
+                style="width:100%;height:200px;object-fit:cover;border-radius:10px;"
+            />
+          `
+                    : ""
+                }
     </tr>
 
     <tr>
@@ -61,7 +71,10 @@ export const sendReminderEmail = async (emails, event) => {
             </h2>
 
             <p style="font-size:16px;color:#555;line-height:1.7;">
-                Your race is almost here! We're excited to see you tomorrow at our upcoming event.
+            ${event.description
+                    ? event.description
+                    : "Your race is almost here! We're excited to see you tomorrow at our upcoming event."
+                }
             </p>
 
             <table width="100%" style="background:#f7fbfc;border-left:5px solid #2BC4DA;margin:25px 0;padding:20px;border-radius:8px;">
@@ -105,7 +118,7 @@ export const sendReminderEmail = async (emails, event) => {
             </div>
 
             <div style="text-align:center;margin-top:35px;">
-                <a href="https://gojrarunningclub.com/events" style="background:#ED2974;color:white;padding:15px 35px;text-decoration:none;border-radius:50px;font-weight:bold;display:inline-block;">
+                <a href="${process.env.BASE_URL}/events/regular" style="background:#ED2974;color:white;padding:15px 35px;text-decoration:none;border-radius:50px;font-weight:bold;display:inline-block;">
                     View Event Details
                 </a>
             </div>

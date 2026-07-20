@@ -36,18 +36,28 @@ export default function WeeklyEvents() {
     const [editingEvent, setEditingEvent] = useState(null);
     const [events, setEvents] = useState([]);
 
-    const filteredEvents = useMemo(() => {
-        return events.filter((event) => {
-            const matchSearch = event.name
-                .toLowerCase()
-                .includes(search.toLowerCase());
+const filteredEvents = useMemo(() => {
 
-            const matchFilter =
-                filter === "All" || event.status === filter;
+    return events.filter((event) => {
 
-            return matchSearch && matchFilter;
-        });
-    }, [search, filter, events]);
+        const searchText = search.toLowerCase();
+
+        const matchSearch =
+            event.name?.toLowerCase().includes(searchText) ||
+            event.location?.toLowerCase().includes(searchText) ||
+            event.distance?.toLowerCase().includes(searchText);
+
+
+        const matchFilter =
+            filter === "All" ||
+            event.status === filter;
+
+
+        return matchSearch && matchFilter;
+
+    });
+
+}, [search, filter, events]);
 
     const [stats, setStats] = useState({
         total: 0,

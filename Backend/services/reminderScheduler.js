@@ -4,19 +4,19 @@ import Member from "../models/Member.js";
 import { sendReminderEmail } from "./emailService.js";
 
 
-cron.schedule("0 * * * *", async () => {
+cron.schedule("*/5 * * * *", async () => {
 
     try {
 
         const now = new Date();
 
         const events = await WeeklyEvent.find({
-            reminderSent:false,
-            status:"Upcoming"
+            reminderSent: false,
+            status: "Upcoming"
         });
 
 
-        for(const event of events){
+        for (const event of events) {
 
 
             const eventDateTime = new Date(
@@ -31,7 +31,7 @@ cron.schedule("0 * * * *", async () => {
 
 
 
-            if(hoursLeft > 0 && hoursLeft <= 24){
+            if (hoursLeft > 0 && hoursLeft <= 24) {
 
 
                 const members =
@@ -39,18 +39,18 @@ cron.schedule("0 * * * *", async () => {
 
 
                 const emails =
-                    members.map(m=>m.email);
+                    members.map(m => m.email);
 
-await sendReminderEmail(emails,event);
+                await sendReminderEmail(emails, event);
 
-event.reminderSent = true;
+                event.reminderSent = true;
 
-await event.save();
+                await event.save();
 
-console.log(
-    "Reminder sent:",
-    event.name
-);
+                console.log(
+                    "Reminder sent:",
+                    event.name
+                );
 
 
             }
@@ -59,11 +59,11 @@ console.log(
 
 
     }
-    catch(error){
+    catch (error) {
 
         console.log(
-          "Cron error:",
-          error.message
+            "Cron error:",
+            error.message
         );
 
     }
