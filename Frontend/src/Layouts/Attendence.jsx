@@ -7,7 +7,7 @@ import {
     FaTimes,
 } from "react-icons/fa";
 import { toast } from "react-toastify";
-import axios from "axios";
+import API from "../api/axios";
 
 
 
@@ -19,14 +19,31 @@ export default function Attendance() {
     const [members, setMembers] = useState([]);
     const [search, setSearch] = useState("");
     const [saving, setSaving] = useState(false);
+    const [memberFilter, setMemberFilter] = useState("active");
 
     const filteredMembers = useMemo(() => {
-        return members.filter((member) =>
-            member.name.toLowerCase().includes(search.toLowerCase()) ||
-            member.memberId.toLowerCase().includes(search.toLowerCase()) ||
-            member.email.toLowerCase().includes(search.toLowerCase())
-        );
-    }, [members, search]);
+
+        return members.filter((member) => {
+
+            const matchesSearch =
+                member.name.toLowerCase().includes(search.toLowerCase()) ||
+                member.memberId.toLowerCase().includes(search.toLowerCase()) ||
+                member.email.toLowerCase().includes(search.toLowerCase());
+
+
+            const matchesStatus =
+                memberFilter === "all"
+                    ? true
+                    : memberFilter === "active"
+                        ? member.isActive
+                        : !member.isActive;
+
+
+            return matchesSearch && matchesStatus;
+
+        });
+
+    }, [members, search, memberFilter]);
     const handleSelectAll = () => {
         setMembers((prev) =>
             prev.map((member) => ({
@@ -44,10 +61,10 @@ export default function Attendance() {
             }))
         );
     };
-    const handleMemberToggle = (id) => {
+    const handleMemberToggle = (_id) => {
         setMembers((prev) =>
             prev.map((member) =>
-                member.id === id
+                member._id === _id
                     ? { ...member, checked: !member.checked }
                     : member
             )
@@ -85,8 +102,8 @@ export default function Attendance() {
             };
 
 
-            await axios.post(
-                `${import.meta.env.VITE_API_URL}/api/attendance`,
+            await API.post(
+                "/attendance",
                 data
             );
 
@@ -118,24 +135,15 @@ export default function Attendance() {
 
             try {
 
-                const eventRes = await axios.get(
-                    `${import.meta.env.VITE_API_URL}/api/weekly-events`
+                const eventRes = await API.get(
+                    "/weekly-events"
                 );
-
-
                 setEvents(eventRes.data);
-
-
                 if (eventRes.data.length > 0) {
-
                     setSelectedEvent(eventRes.data[0]);
-
                 }
-
-
-
-                const memberRes = await axios.get(
-                    `${import.meta.env.VITE_API_URL}/api/members/active`
+                const memberRes = await API.get(
+                    "/members"
                 );
 
 
@@ -145,8 +153,6 @@ export default function Attendance() {
                         checked: false
                     }))
                 );
-
-
             }
             catch (error) {
 
@@ -242,7 +248,12 @@ export default function Attendance() {
                         }}
                     >
                         {events.map((event) => (
-                            <option key={event._id} value={event._id}>
+                            <option key={event._id} value={event._id}
+                                style={{
+                                    background: "#FFFFFF",
+                                    color: "#1B2F51",
+                                    fontWeight: "600",
+                                }}>
                                 {event.name}
                             </option>
                         ))}
@@ -273,7 +284,7 @@ export default function Attendance() {
                                 marginTop: "8px",
                             }}
                         >
-                            {selectedEvent?.distance}
+                            {selectedEvent?.distance} KM
                         </h2>
                     </div>
 
@@ -323,8 +334,63 @@ export default function Attendance() {
                             />
                         </div>
 
+                        <select
+                            value={memberFilter}
+                            onChange={(e) => setMemberFilter(e.target.value)}
+                            style={{
+                                padding: "10px",
+                                borderRadius: "8px",
+                                border: "2px solid #2BC4DA",
+                                color: "#1B2F51",
+                                fontWeight: "600"
+                            }}
+                        >
+                            <option value="active">
+                                Active Members
+                            </option>
+
+                            <option value="inactive">
+                                Inactive Members
+                            </option>
+
+                            <option value="all">
+                                All Members
+                            </option>
+
+                        </select>
+
                         <button
-                            onClick={handleSelectAll}
+                            onClick={() => {
+
+                                const allSelected = filteredMembers.every(
+                                    member => member.checked
+                                );
+
+
+                                setMembers(prev =>
+                                    prev.map(member => {
+
+                                        const isFilteredMember = filteredMembers.some(
+                                            item => item._id === member._id
+                                        );
+
+
+                                        if (isFilteredMember) {
+
+                                            return {
+                                                ...member,
+                                                checked: !allSelected
+                                            };
+
+                                        }
+
+
+                                        return member;
+
+                                    })
+                                );
+
+                            }}
                             style={{
                                 background: "#2BC4DA",
                                 color: "#fff",
@@ -334,21 +400,13 @@ export default function Attendance() {
                                 cursor: "pointer",
                             }}
                         >
-                            <FaCheck /> Select All
-                        </button>
-
-                        <button
-                            onClick={handleUnselectAll}
-                            style={{
-                                background: "#ED2974",
-                                color: "#fff",
-                                border: "none",
-                                padding: "12px 18px",
-                                borderRadius: 8,
-                                cursor: "pointer",
-                            }}
-                        >
-                            <FaTimes /> Unselect
+                            <FaCheck />
+                            {
+                                filteredMembers.length > 0 &&
+                                    filteredMembers.every(member => member.checked)
+                                    ? "Unselect All"
+                                    : "Select All"
+                            }
                         </button>
                     </div>
                     <div
@@ -361,8 +419,8 @@ export default function Attendance() {
                     >
                         {filteredMembers.map((member) => (
                             <div
-                                key={member.id}
-                                onClick={() => handleMemberToggle(member.id)}
+                                key={member._id}
+                                onClick={() => handleMemberToggle(member._id)}
                                 style={{
                                     display: "flex",
                                     justifyContent: "space-between",
@@ -388,8 +446,8 @@ export default function Attendance() {
                                 >
                                     <img
                                         src={
-`${import.meta.env.VITE_API_URL}/${member.profileImage}`
-}
+                                            `${import.meta.env.VITE_API_URL}/${member.photo}`
+                                        }
                                         alt={member.name}
                                         style={{
                                             width: 55,
@@ -425,7 +483,7 @@ export default function Attendance() {
                                 <input
                                     type="checkbox"
                                     checked={member.checked}
-                                    onChange={() => handleMemberToggle(member.id)}
+                                    onChange={() => handleMemberToggle(member._id)}
                                     onClick={(e) => e.stopPropagation()}
                                     style={{
                                         width: 22,

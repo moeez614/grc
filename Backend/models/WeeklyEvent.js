@@ -29,7 +29,7 @@ const weeklyEventSchema = new mongoose.Schema(
         },
 
         distance: {
-            type: String,
+            type: Number,
             required: true
         },
 

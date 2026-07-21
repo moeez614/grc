@@ -592,7 +592,7 @@ const filteredEvents = useMemo(() => {
                                 <td>{event.time}</td>
                                 <td>{event.location}</td>
 
-                                <td>{event.distance}</td>
+                                <td>{event.distance} KM</td>
 
                                 <td>
                                     <span

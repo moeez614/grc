@@ -1,6 +1,6 @@
 import Member from "../models/Member.js";
 import WeeklyEvent from "../models/WeeklyEvent.js";
-
+import Attendance from "../models/Attendance.js";
 
 export const saveAttendance = async(req,res)=>{
 
@@ -11,9 +11,6 @@ export const saveAttendance = async(req,res)=>{
             members
         } = req.body;
 
-
-        // find event
-
         const event = await WeeklyEvent.findById(eventId);
 
 
@@ -22,10 +19,6 @@ export const saveAttendance = async(req,res)=>{
                 message:"Event not found"
             });
         }
-
-
-
-        // update selected members
 
         for(const memberId of members){
 
