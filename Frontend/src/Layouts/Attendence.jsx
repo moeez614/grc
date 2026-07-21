@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import {
     FaRunning,
     FaCheckCircle,
@@ -7,64 +7,19 @@ import {
     FaTimes,
 } from "react-icons/fa";
 import { toast } from "react-toastify";
+import axios from "axios";
 
-const events = [
-    {
-        id: 1,
-        name: "City Run",
-        distance: "10 KM",
-    },
-    {
-        id: 2,
-        name: "Night Run",
-        distance: "5 KM",
-    },
-    {
-        id: 3,
-        name: "Sunday Long Run",
-        distance: "21 KM",
-    },
-];
-const initialMembers = [
-    {
-        id: 1,
-        memberId: "GRC001",
-        name: "Ali",
-        email: "ali@gmail.com",
-        photo: "https://i.pravatar.cc/100?img=1",
-        checked: true,
-    },
-    {
-        id: 2,
-        memberId: "GRC002",
-        name: "Ahmed",
-        email: "ahmed@gmail.com",
-        photo: "https://i.pravatar.cc/100?img=2",
-        checked: true,
-    },
-    {
-        id: 3,
-        memberId: "GRC003",
-        name: "Usman",
-        email: "usman@gmail.com",
-        photo: "https://i.pravatar.cc/100?img=3",
-        checked: false,
-    },
-    {
-        id: 4,
-        memberId: "GRC004",
-        name: "Hassan",
-        email: "hassan@gmail.com",
-        photo: "https://i.pravatar.cc/100?img=4",
-        checked: true,
-    },
-];
+
 
 export default function Attendance() {
-    const [selectedEvent, setSelectedEvent] = useState(events[0]);
-    const [members, setMembers] = useState(initialMembers);
+    const [events, setEvents] = useState([]);
+
+    const [selectedEvent, setSelectedEvent] = useState(null);
+
+    const [members, setMembers] = useState([]);
     const [search, setSearch] = useState("");
     const [saving, setSaving] = useState(false);
+
     const filteredMembers = useMemo(() => {
         return members.filter((member) =>
             member.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -100,24 +55,116 @@ export default function Attendance() {
     };
 
     const handleSave = async () => {
+
         try {
+
             setSaving(true);
 
-            const attendance = members.filter((m) => m.checked);
 
-            console.log(attendance);
+            const selectedMembers = members
+                .filter(member => member.checked)
+                .map(member => member._id);
 
-            // await axios.post(...)
 
-            await new Promise((resolve) => setTimeout(resolve, 2000));
 
-            toast.success("Attendance saved successfully!");
-        } catch (err) {
-            toast.error("Failed to save attendance");
+            if (selectedMembers.length === 0) {
+
+                toast.error("Please select at least one member");
+
+                return;
+            }
+
+
+
+            const data = {
+
+                eventId: selectedEvent._id,
+
+                members: selectedMembers
+
+            };
+
+
+            await axios.post(
+                `${import.meta.env.VITE_API_URL}/api/attendance`,
+                data
+            );
+
+
+            toast.success(
+                "Attendance saved successfully"
+            );
+
+
+        } catch (error) {
+
+            console.log(error);
+
+            toast.error(
+                "Failed to save attendance"
+            );
+
+
         } finally {
+
             setSaving(false);
+
         }
+
     };
+    useEffect(() => {
+
+        const fetchData = async () => {
+
+            try {
+
+                const eventRes = await axios.get(
+                    `${import.meta.env.VITE_API_URL}/api/weekly-events`
+                );
+
+
+                setEvents(eventRes.data);
+
+
+                if (eventRes.data.length > 0) {
+
+                    setSelectedEvent(eventRes.data[0]);
+
+                }
+
+
+
+                const memberRes = await axios.get(
+                    `${import.meta.env.VITE_API_URL}/api/members/active`
+                );
+
+
+                setMembers(
+                    memberRes.data.map(member => ({
+                        ...member,
+                        checked: false
+                    }))
+                );
+
+
+            }
+            catch (error) {
+
+                console.log(error);
+
+                toast.error(
+                    "Failed to load attendance data"
+                );
+
+            }
+
+        };
+
+
+        fetchData();
+
+
+    }, []);
 
     return (
         <div
@@ -178,10 +225,10 @@ export default function Attendance() {
                     </h3>
 
                     <select
-                        value={selectedEvent.id}
+                        value={selectedEvent?._id || ""}
                         onChange={(e) => {
                             const event = events.find(
-                                (item) => item.id === Number(e.target.value)
+                                (item) => item._id === e.target.value
                             );
                             setSelectedEvent(event);
                         }}
@@ -195,7 +242,7 @@ export default function Attendance() {
                         }}
                     >
                         {events.map((event) => (
-                            <option key={event.id} value={event.id}>
+                            <option key={event._id} value={event._id}>
                                 {event.name}
                             </option>
                         ))}
@@ -226,7 +273,7 @@ export default function Attendance() {
                                 marginTop: "8px",
                             }}
                         >
-                            {selectedEvent.distance}
+                            {selectedEvent?.distance}
                         </h2>
                     </div>
 
@@ -305,88 +352,90 @@ export default function Attendance() {
                         </button>
                     </div>
                     <div
-    style={{
-        display: "flex",
-        flexDirection: "column",
-        gap: "15px",
-        marginTop: "20px",
-    }}
->
-    {filteredMembers.map((member) => (
-        <div
-            key={member.id}
-            onClick={() => handleMemberToggle(member.id)}
-            style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                padding: "15px 20px",
-                borderRadius: "12px",
-                background: member.checked ? "#eefcff" : "#fff",
-                border: member.checked
-                    ? "2px solid #2BC4DA"
-                    : "1px solid #ddd",
-                boxShadow: "0 3px 8px rgba(0,0,0,.05)",
-                cursor: "pointer",
-                transition: "0.2s ease",
-            }}
-        >
-            {/* Left */}
-            <div
-                style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 15,
-                }}
-            >
-                <img
-                    src={member.photo}
-                    alt={member.name}
-                    style={{
-                        width: 55,
-                        height: 55,
-                        borderRadius: "50%",
-                        objectFit: "cover",
-                    }}
-                />
-
-                <div>
-                    <h4
                         style={{
-                            margin: 0,
-                            color: "#1B2F51",
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: "15px",
+                            marginTop: "20px",
                         }}
                     >
-                        {member.name}
-                    </h4>
+                        {filteredMembers.map((member) => (
+                            <div
+                                key={member.id}
+                                onClick={() => handleMemberToggle(member.id)}
+                                style={{
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                    alignItems: "center",
+                                    padding: "15px 20px",
+                                    borderRadius: "12px",
+                                    background: member.checked ? "#eefcff" : "#fff",
+                                    border: member.checked
+                                        ? "2px solid #2BC4DA"
+                                        : "1px solid #ddd",
+                                    boxShadow: "0 3px 8px rgba(0,0,0,.05)",
+                                    cursor: "pointer",
+                                    transition: "0.2s ease",
+                                }}
+                            >
+                                {/* Left */}
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        gap: 15,
+                                    }}
+                                >
+                                    <img
+                                        src={
+`${import.meta.env.VITE_API_URL}/${member.profileImage}`
+}
+                                        alt={member.name}
+                                        style={{
+                                            width: 55,
+                                            height: 55,
+                                            borderRadius: "50%",
+                                            objectFit: "cover",
+                                        }}
+                                    />
 
-                    <p
-                        style={{
-                            margin: "4px 0",
-                            color: "#666",
-                            fontSize: 14,
-                        }}
-                    >
-                        {member.memberId}
-                    </p>
-                </div>
-            </div>
+                                    <div>
+                                        <h4
+                                            style={{
+                                                margin: 0,
+                                                color: "#1B2F51",
+                                            }}
+                                        >
+                                            {member.name}
+                                        </h4>
 
-            {/* Right */}
-            <input
-                type="checkbox"
-                checked={member.checked}
-                onChange={() => handleMemberToggle(member.id)}
-                onClick={(e) => e.stopPropagation()}
-                style={{
-                    width: 22,
-                    height: 22,
-                    accentColor: "#ED2974",
-                }}
-            />
-        </div>
-    ))}
-</div>
+                                        <p
+                                            style={{
+                                                margin: "4px 0",
+                                                color: "#666",
+                                                fontSize: 14,
+                                            }}
+                                        >
+                                            {member.memberId}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                {/* Right */}
+                                <input
+                                    type="checkbox"
+                                    checked={member.checked}
+                                    onChange={() => handleMemberToggle(member.id)}
+                                    onClick={(e) => e.stopPropagation()}
+                                    style={{
+                                        width: 22,
+                                        height: 22,
+                                        accentColor: "#ED2974",
+                                    }}
+                                />
+                            </div>
+                        ))}
+                    </div>
 
                     {/* Save Button */}
                     <div
