@@ -20,6 +20,8 @@ import adminRoutes from "./routes/adminRoutes.js";
 import memberRoutes from "./routes/memberRoutes.js";
 import sponsorRoutes from "./routes/sponsorRoute.js";
 import weeklyEventRoutes from "./routes/weeklyEventRoutes.js";
+import attendanceRoutes from "./routes/attendanceRoutes.js";
+
 
 
 app.use("/uploads", express.static("uploads"));
@@ -28,6 +30,7 @@ app.use("/api/sponsors", sponsorRoutes);
 app.use("/api/admin",adminRoutes);
 app.use("/api/members",memberRoutes);
 app.use("/api/weekly-events",weeklyEventRoutes);
+app.use("/api/attendance",attendanceRoutes);
 
 // test run
 app.get("/", (req, res) => {
