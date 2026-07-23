@@ -1,0 +1,1 @@
+import{t as e}from"./axios-DeoP3Jk6.js";var t=e.create({baseURL:`http://localhost:5000/api`});t.interceptors.request.use(e=>{let t=localStorage.getItem(`adminToken`);return t&&(e.headers.Authorization=`Bearer ${t}`),e}),t.interceptors.response.use(e=>e,e=>(e.response?.status===401&&localStorage.removeItem(`adminToken`),Promise.reject(e)));export{t};
