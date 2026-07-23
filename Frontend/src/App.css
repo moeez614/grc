@@ -1616,3 +1616,18 @@ button {
         transform: rotate(360deg);
     }
 }
+.loade66r{
+display:inline-block;
+width:14px;
+height:14px;
+border:2px solid white;
+border-top-color:transparent;
+border-radius:50%;
+animation:spin .7s linear infinite;
+}
+
+@keyframes spin{
+to{
+transform:rotate(360deg);
+}
+}
