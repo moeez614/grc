@@ -36,7 +36,7 @@ const links = [
     },
     {
         name: "Upload Gallery Images",
-        path: "/admin/gallery",
+        path: "gallery",
         icon: <FaImages />,
     },
     {

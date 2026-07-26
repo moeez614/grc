@@ -252,10 +252,14 @@ const SpecialDesc = () => {
                     />
 
                     <Marker position={route[0]}>
-                        <Popup>🏁 Start Point</Popup>
+                        <Tooltip permanent direction="top" offset={[0, -10]} className="finish-tooltip">
+                            🏁 Start Point
+                        </Tooltip>
                     </Marker>
                     <Marker position={route[route.length - 1]}>
-                        <Popup>🎉 Finish Point</Popup>
+                        <Tooltip permanent direction="top" offset={[0, -10]} className="finish-tooltip">
+                            🏆 Finish Point
+                        </Tooltip>
                     </Marker>
 
                 </MapContainer>

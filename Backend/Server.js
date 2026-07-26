@@ -1,4 +1,6 @@
 // server.js
+import dns from "dns";
+dns.setDefaultResultOrder("ipv4first");
 import dotenv from "dotenv";
 dotenv.config();
 import express from "express";
@@ -22,6 +24,7 @@ import sponsorRoutes from "./routes/sponsorRoute.js";
 import weeklyEventRoutes from "./routes/weeklyEventRoutes.js";
 import attendanceRoutes from "./routes/attendanceRoutes.js";
 import annualEventRoutes from "./routes/annualEventRoutes.js";
+import galleryRoutes from "./routes/cloudinaryRoutes.js";
 
 
 
@@ -33,7 +36,18 @@ app.use("/api/members",memberRoutes);
 app.use("/api/weekly-events",weeklyEventRoutes);
 app.use("/api/attendance",attendanceRoutes);
 app.use("/api/annual-events",annualEventRoutes);
+app.use("/api/gallery", galleryRoutes);
 
+app.use((err, req, res, next)=>{
+
+    console.log("GLOBAL ERROR:");
+    console.log(err);
+
+    res.status(500).json({
+        message: err.message || "Something went wrong"
+    });
+
+});
 // test run
 app.get("/", (req, res) => {
     res.send("Server is running");

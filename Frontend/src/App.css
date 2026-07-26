@@ -4,12 +4,30 @@
   font-family: "Inter", sans-serif;
 }
 
+
 /* 
 pacific blue #2BC4DA
 Razzmataz ed2974
 Twilight indigo 1b2f51
 white ffffff
 */
+/* footer , privacy plicy , term and condition, */
+/* Color Palette Variables */
+:root {
+  --twilight-indigo: #1B2F51;
+  --pacific-blue: #2BC4DA;
+  --razzmatazz: #ED2974;
+  --white: #FFFFFF;
+  --bg-aliceblue: #F0F8FF;
+  
+  --card-bg: rgba(255, 255, 255, 0.85);
+  --text-muted: #5A6E85;
+  --border-radius: 20px;
+  --transition-fast: 0.25s ease;
+  --box-shadow: 0 10px 30px -10px rgba(27, 47, 81, 0.08);
+  --box-shadow-hover: 0 20px 40px -10px rgba(27, 47, 81, 0.16);
+}
+
 .marg {
   color: #ED2974;
 }
@@ -451,67 +469,6 @@ white ffffff
   color: #1b2f51;
 }
 
-.event-card {
-  width: 380px;
-  background: #fff;
-  border-radius: 20px;
-  overflow: hidden;
-  box-shadow: 0 10px 30px rgba(27, 47, 81, .12);
-  border: 1px solid rgba(43, 196, 218, .2);
-  transition: .3s;
-  font-family: sans-serif;
-}
-
-.event-header {
-  background: #1B2F51;
-  color: #fff;
-  padding: 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.event-header h2 {
-  margin: 0;
-  font-size: 22px;
-}
-
-.event-header span {
-  background: #ED2974;
-  padding: 8px 14px;
-  border-radius: 20px;
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.event-details {
-  padding: 20px;
-  color: #1B2F51;
-}
-
-.event-details p {
-  margin: 12px 0;
-  font-size: 15px;
-}
-
-.event-description {
-  padding: 0 20px 20px;
-  color: #555;
-  line-height: 1.6;
-}
-
-.event-coach {
-  padding: 0 20px 20px;
-  font-weight: 600;
-  color: #1B2F51;
-}
-
-.event-actions {
-  display: flex;
-  gap: 12px;
-  padding: 20px;
-}
-
 .register-btn {
   flex: 1;
   background: #2BC4DA;
@@ -794,66 +751,6 @@ white ffffff
 
 .modal-box button {
   margin-top: 15px;
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-.footer {
-  background: #1B2F51;
-  color: #fff;
-  padding: 60px 8% 20px;
-}
-
-.footer-top {
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr;
-  gap: 50px;
-  padding-bottom: 40px;
-  border-bottom: 1px solid rgba(255, 255, 255, .15);
-}
-
-.footer-logo {
-  width: 90px;
-  height: 90px;
-  margin-bottom: 20px;
-}
-
-.footer-section h2 {
-  color: #2BC4DA;
-  margin-bottom: 15px;
-}
-
-.footer-section h3 {
-  color: #2BC4DA;
-  margin-bottom: 20px;
-}
-
-.footer-section p {
-  line-height: 1.8;
-  color: #ddd;
-}
-
-.footer-section ul {
-  list-style: none;
-}
-
-.footer-section ul li {
-  margin: 12px 0;
-}
-
-.footer-section ul li a {
-  color: #ddd;
-  text-decoration: none;
-  transition: .3s;
-}
-
-.footer-section ul li a:hover {
-  color: #ED2974;
-  padding-left: 8px;
 }
 
 .sponsors {

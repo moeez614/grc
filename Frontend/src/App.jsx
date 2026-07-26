@@ -29,6 +29,7 @@ const EventManagement = lazy(() => import('./Layouts/EventManagement.jsx'))
 const AnnualEvents = lazy(() => import('./Layouts/AnnualEvents.jsx'))
 const WeeklyEvents = lazy(() => import('./Layouts/WeeklyEvents.jsx'))
 const Attendence = lazy(() => import('./Layouts/Attendence.jsx'))
+const Gallery = lazy(() => import('./Layouts/Gallery.jsx'))
 
 function App() {
 
@@ -110,7 +111,7 @@ function App() {
               <Route path='annual-events' element={<AnnualEvents />}></Route>
             </Route>
             <Route path='attendence-management' element={<Attendence />}></Route>
-
+            <Route path='gallery' element={<Gallery />} ></Route>
           </Route>
 
         </Routes>
