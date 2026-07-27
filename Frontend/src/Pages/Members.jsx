@@ -17,7 +17,7 @@ const PALETTE = {
 
 
 export default function GojraRunningClub() {
-    // Sample Club Data
+  // Sample Club Data
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -141,7 +141,7 @@ export default function GojraRunningClub() {
         </div>
       </div>
 
-      <Footer />  
+      <Footer />
     </div>
   );
 }
@@ -177,18 +177,18 @@ function MemberCard({ member }) {
       <div style={styles.cardHeader}>
         <div style={styles.avatarGlowWrapper}>
           <img
-  src={
-    member.photo
-      ? `${import.meta.env.VITE_API_URL}/${member.photo.replace(/\\/g, "/")}`
-      : hollow
-  }
-  alt={member.name}
-  style={styles.avatar}
-  onError={(e) => {
-    e.target.onerror = null;
-    e.target.src = hollow;
-  }}
-/>
+            src={
+              member.photo
+                ? `${import.meta.env.VITE_API_URL}/${member.photo.replace(/\\/g, "/")}`
+                : hollow
+            }
+            alt={member.name}
+            style={styles.avatar}
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = hollow;
+            }}
+          />
         </div>
         <span style={{ ...styles.roleBadge, ...getRoleStyle(member.title) }}>
           {member.title}

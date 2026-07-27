@@ -22,6 +22,8 @@ const SpecialDesc = lazy(() => import('./Events/SpecialDesc.jsx'))
 // Components
 const PrivacyPolicy = lazy(() => import('./Components/PrivacyPolicy.jsx'))
 const TermCondition = lazy(() => import('./Components/TermCondition.jsx'))
+// components/common
+import ScrollToTop from './Components/common/ScrollToTop.jsx'
 // Layout
 const MembersManagement = lazy(() => import('./Layouts/MemberManagement.jsx'))
 const SponsorManagement = lazy(() => import('./Layouts/SponsorManagement.jsx'))
@@ -36,6 +38,7 @@ function App() {
   return (
     <>
       <HashRouter>
+        <ScrollToTop />
         <Routes>
           <Route path="/" element={
             <Suspense fallback={<Loader />}>
@@ -55,7 +58,7 @@ function App() {
             <Route path="regular" element={<Regular />}></Route>
             <Route path='special' element={<Special />}></Route>
           </Route>
-          <Route path='/events/special/description' element={<SpecialDesc />}></Route>
+          <Route path='/events/special/description/:id' element={<SpecialDesc />}></Route>
           <Route path='/events/special/register' element={
             <Suspense fallback={<Loader />}>
               <RegisterRun />

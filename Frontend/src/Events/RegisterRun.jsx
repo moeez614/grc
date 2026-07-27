@@ -1,266 +1,765 @@
-import React from 'react'
-import Navbar from '../Components/Navbar'
-import { useState } from 'react'
-import { useForm } from "react-hook-form";
+import React, { useState } from 'react';
+import Navbar from '../Components/Navbar';
 import Footer from '../Components/common/Footer';
-import QR from '../assets/qr.png'
-import { useMediaQuery } from "react-responsive";
+import QR from '../assets/qr.png';
+import { useForm } from "react-hook-form";
+import { NavLink } from "react-router-dom";
+import { 
+  FaUser, 
+  FaEnvelope, 
+  FaHashtag, 
+  FaRunning, 
+  FaPhoneAlt, 
+  FaCloudUploadAlt, 
+  FaCheckCircle, 
+  FaDownload, 
+  FaTimes, 
+  FaQrcode,
+  FaShieldAlt
+} from "react-icons/fa";
 
 const RegisterRun = () => {
-    const isMobile = useMediaQuery({ maxWidth: 768 });
-    const {
-        register,
-        handleSubmit,
-        formState: { errors },
-    } = useForm();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
-    const [preview, setPreview] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [success, setSuccess] = useState(false);
-    const [participant, setParticipant] = useState(null);
+  const [preview, setPreview] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [participant, setParticipant] = useState(null);
 
-    const onSubmit = (data) => {
-        setLoading(true);
+  const onSubmit = (data) => {
+    setLoading(true);
 
-        setTimeout(() => {
-            setLoading(false);
-            setParticipant(data);
-            setSuccess(true);
-        }, 2000);
-    };
+    setTimeout(() => {
+      setLoading(false);
+      setParticipant(data);
+      setSuccess(true);
+    }, 1800);
+  };
 
-    const downloadSlip = () => {
-        const slip = `
-GOJRA RUNNING CLUB
--------------------------
-Participant Slip
+  const downloadSlip = () => {
+    const slip = `
+========================================
+         GOJRA RUNNING CLUB
+       Official Participant Slip
+========================================
 
-Name: ${participant.fullName}
-Phone: ${participant.phone}
-Email: ${participant.email}
-Age: ${participant.age}
-Gender: ${participant.gender}
-Category: ${participant.category}
-Emergency Contact: ${participant.emergency}
+Participant Details:
+--------------------
+Full Name:        ${participant?.fullName}
+Email Address:    ${participant?.email}
+Age:              ${participant?.age}
+Race Category:    ${participant?.category}
+Emergency Contact:${participant?.emergency}
+Transaction ID:   ${participant?.TId}
 
-Status: will be updated soon
+Status: Pending Verification
+Event Date: 14 August 2026
+Venue: Gojra Sports Complex
+
+Thank you for registering with Gojra Running Club!
+========================================
 `;
 
-        const blob = new Blob([slip], { type: "text/plain" });
-        const url = URL.createObjectURL(blob);
+    const blob = new Blob([slip], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
 
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "participant-slip.txt";
-        a.click();
-    };
-    return (
-        <>
-            <Navbar />
-            <div className="register-container aliceblue">
-                <div className="register-card">
-                    <h1>Special Event Registration</h1>
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `GojraRun-${participant?.fullName?.replace(/\s+/g, '_') || 'Slip'}.txt`;
+    a.click();
+  };
 
-                    <form onSubmit={handleSubmit(onSubmit)}>
+  return (
+    <div className="register-page-wrapper">
+      <style>{`
+        :root {
+          --twilight-indigo: #1B2F51;
+          --pacific-blue: #2BC4DA;
+          --razzmatazz: #ED2974;
+          --bg-alice: aliceblue;
+          --card-white: #FFFFFF;
+          --text-dark: #111827;
+          --text-muted: #6B7280;
+          --border-color: #E5E7EB;
+        }
 
-                        <div className="input-group">
-                            <label>Full Name</label>
-                            <input
-                                {...register("fullName", {
-                                    required: "Name required",
-                                })}
-                            />
-                            <span>{errors.fullName?.message}</span>
-                        </div>
+        .register-page-wrapper {
+          background-color: var(--bg-alice);
+          min-height: 100vh;
+          font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+          color: var(--text-dark);
+          display: flex;
+          flex-direction: column;
+        }
 
-                        <div className="input-group">
-                            <label>Phone Number</label>
-                            <input
-                                {...register("phone", {
-                                    required: "Phone required",
-                                    pattern: {
-                                        value: /^[0-9]{11}$/,
-                                        message: "Enter valid number",
-                                    },
-                                })}
-                            />
-                            <span>{errors.phone?.message}</span>
-                        </div>
+        .register-hero {
+          background: linear-gradient(135deg, var(--twilight-indigo) 0%, #0d1a30 100%);
+          color: #FFFFFF;
+          padding: 60px 20px 100px;
+          text-align: center;
+          position: relative;
+          overflow: hidden;
+        }
 
-                        <div className="input-group">
-                            <label>Email</label>
-                            <input
-                                {...register("email", {
-                                    required: "Email required",
-                                })}
-                            />
-                            <span>{errors.email?.message}</span>
-                        </div>
+        .hero-glow {
+          position: absolute;
+          top: -100px;
+          right: 50%;
+          transform: translateX(50%);
+          width: 500px;
+          height: 300px;
+          background: radial-gradient(circle, rgba(43, 196, 218, 0.2) 0%, rgba(237, 41, 116, 0.15) 50%, rgba(0,0,0,0) 100%);
+          filter: blur(80px);
+          pointer-events: none;
+        }
 
-                        <div className="input-group">
-                            <label>Age</label>
-                            <input
-                                type="number"
-                                {...register("age", {
-                                    required: "Age required",
-                                })}
-                            />
-                            <span>{errors.age?.message}</span>
-                        </div>
+        .register-hero h1 {
+          font-size: clamp(2rem, 5vw, 3rem);
+          font-weight: 800;
+          margin-bottom: 12px;
+          letter-spacing: -0.5px;
+        }
 
-                        <div className="input-group">
-                            <label>Gender</label>
-                            <select
-                                {...register("gender", {
-                                    required: "Gender required",
-                                })}
-                            >
-                                <option value="">Select</option>
-                                <option>Male</option>
-                                <option>Female</option>
-                            </select>
-                            <span>{errors.gender?.message}</span>
-                        </div>
+        .register-hero h1 span {
+          background: linear-gradient(90deg, var(--pacific-blue), var(--razzmatazz));
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+        }
 
-                        <div className="input-group">
-                            <label>Race Category</label>
-                            <select
-                                {...register("category", {
-                                    required: "Category required",
-                                })}
-                            >
-                                <option value="">Select</option>
-                                <option>5 KM</option>
-                                <option>10 KM</option>
-                                <option>Other</option>
-                            </select>
-                            <span>{errors.category?.message}</span>
-                        </div>
+        .register-hero p {
+          color: #D1D5DB;
+          max-width: 550px;
+          margin: 0 auto;
+          font-size: 1rem;
+        }
 
-                        <div className="input-group">
-                            <label>Emergency Contact</label>
-                            <input
-                                {...register("emergency", {
-                                    required: "Required",
-                                })}
-                            />
-                            <span>{errors.emergency?.message}</span>
-                        </div>
-                        {/* method to pay */}
-                        <div className="payment-card">
-                            <h3>💳 Registration Fee & Payment Details</h3>
+        .register-main {
+          max-width: 800px;
+          width: 100%;
+          margin: -60px auto 80px;
+          padding: 0 20px;
+          position: relative;
+          z-index: 2;
+        }
 
-                            <div className="payment-info">
-                                <section className='jazz' style={{display: "flex",flexDirection: isMobile ? "column" : "row"}}>
-                                    <div>
-                                        <p><strong>Registration Fee:</strong> PKR 500</p>
-                                        <p><strong>Payment Method:</strong> Easypaisa</p>
-                                        <p><strong>Account Title:</strong> Gojra Running Club</p>
-                                        <p><strong>Account Number:</strong> 0300-1234567</p>
-                                    </div>
-                                    <img src={QR} alt="Scan me" width="100px" />
-                                </section>
-                                <div className="instruction">
-                                    <strong>Instructions:</strong>
-                                    <ol>
-                                        <li>Send the registration fee.</li>
-                                        <li>Take a screenshot of the payment receipt.</li>
-                                        <li>Upload TId & screenshot below.</li>
-                                    </ol>
-                                </div>
-                            </div>
-                        </div>
-                         <div className="input-group">
-                            <label>TId</label>
-                            <input
-                                type="number"
-                                {...register("TId", {
-                                    required: "TId required",
-                                })}
-                            />
-                            <span>{errors.TId?.message}</span>
-                        </div>
-                        <div className="input-group">
-                            <label>Payment Screenshot</label>
-                            <input
-                                type="file"
-                                accept="image/*"
-                                {...register("payment", {
-                                    required: "Payment proof required",
-                                })}
-                                onChange={(e) => {
-                                    if (e.target.files[0]) {
-                                        setPreview(
-                                            URL.createObjectURL(e.target.files[0])
-                                        );
-                                    }
-                                }}
-                            />
-                            <span>{errors.payment?.message}</span>
+        .form-card {
+          background: var(--card-white);
+          border-radius: 28px;
+          padding: 40px;
+          box-shadow: 0 20px 40px rgba(27, 47, 81, 0.08);
+          border: 1px solid rgba(27, 47, 81, 0.06);
+        }
 
-                            {preview && (
-                                <img
-                                    className="preview"
-                                    src={preview}
-                                    alt=""
-                                />
-                            )}
-                        </div>
+        .form-section-title {
+          font-size: 1.15rem;
+          font-weight: 800;
+          color: var(--twilight-indigo);
+          margin-bottom: 24px;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          border-bottom: 2px solid var(--bg-alice);
+          padding-bottom: 10px;
+        }
 
-                        <div className="checkbox">
-                            <input
-                                type="checkbox"
-                                {...register("terms", {
-                                    required: true,
-                                })}
-                            />
-                            <label>
-                                I accept Terms & Conditions
-                            </label>
-                        </div>
+        .form-grid {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 20px;
+        }
 
-                        {errors.terms && (
-                            <p className="error">
-                                Accept terms first
-                            </p>
-                        )}
+        .input-group {
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+        }
 
-                        <button disabled={loading} className="button">
-                            {loading ? (
-                                <div className="spinner"></div>
-                            ) : (
-                                "Register"
-                            )}
-                        </button>
-                    </form>
-                </div>
+        .input-group.full-width {
+          grid-column: span 2;
+        }
+
+        .input-group label {
+          font-size: 0.85rem;
+          font-weight: 700;
+          color: var(--twilight-indigo);
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+
+        .input-wrapper {
+          position: relative;
+          display: flex;
+          align-items: center;
+          
+        }
+
+        .input-icon {
+          position: absolute;
+          left: 18px;
+          color: var(--text-muted);
+          font-size: 1rem;
+          pointer-events: none;
+        }
+
+        .input-field {
+          width: 100%;
+          padding: 14px 16px 14px 44px !important;
+          border-radius: 14px;
+          border: 1.5px solid var(--border-color);
+          background: #FAFAFA;
+          font-size: 0.95rem;
+          color: var(--text-dark);
+          transition: all 0.2s ease;
+          outline: none;
+        }
+
+        .input-field:focus {
+          border-color: var(--pacific-blue);
+          background: #FFFFFF;
+          box-shadow: 0 0 0 4px rgba(43, 196, 218, 0.15);
+        }
+
+        select.input-field {
+          cursor: pointer;
+          appearance: none;
+        }
+
+        .error-msg {
+          color: var(--razzmatazz);
+          font-size: 0.78rem;
+          font-weight: 600;
+          margin-top: 2px;
+        }
+
+        /* Payment Section Card */
+        .payment-box {
+          background: linear-gradient(135deg, rgba(27, 47, 81, 0.03) 0%, rgba(43, 196, 218, 0.06) 100%);
+          border: 1.5px dashed var(--pacific-blue);
+          border-radius: 20px;
+          padding: 24px;
+          margin: 32px 0;
+        }
+
+        .payment-header {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          font-size: 1.1rem;
+          font-weight: 800;
+          color: var(--twilight-indigo);
+          margin-bottom: 16px;
+        }
+
+        .payment-content {
+          display: flex;
+          gap: 20px;
+          align-items: center;
+          justify-content: space-between;
+        }
+
+        .payment-details {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+          font-size: 0.92rem;
+        }
+
+        .payment-details p strong {
+          color: var(--twilight-indigo);
+        }
+
+        .qr-card {
+          background: #FFFFFF;
+          padding: 10px;
+          border-radius: 16px;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 6px;
+        }
+
+        .qr-card img {
+          width: 110px;
+          height: 110px;
+          object-fit: contain;
+        }
+
+        .qr-card span {
+          font-size: 0.7rem;
+          font-weight: 700;
+          color: var(--text-muted);
+          text-transform: uppercase;
+        }
+
+        .instructions-list {
+          margin-top: 16px;
+          padding-top: 16px;
+          border-top: 1px solid rgba(27, 47, 81, 0.1);
+          font-size: 0.85rem;
+          color: var(--text-muted);
+        }
+
+        .instructions-list ol {
+          margin: 6px 0 0 18px;
+          padding: 0;
+        }
+
+        /* Upload Area */
+        .file-upload-box {
+          border: 2px dashed var(--border-color);
+          border-radius: 16px;
+          padding: 24px;
+          text-align: center;
+          background: #FAFAFA;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          position: relative;
+        }
+
+        .file-upload-box:hover {
+          border-color: var(--pacific-blue);
+          background: rgba(43, 196, 218, 0.03);
+        }
+
+        .upload-icon {
+          font-size: 2rem;
+          color: var(--pacific-blue);
+          margin-bottom: 8px;
+        }
+
+        .file-input-hidden {
+          position: absolute;
+          inset: 0;
+          opacity: 0;
+          cursor: pointer;
+          width: 100%;
+          height: 100%;
+        }
+
+        .preview-img {
+          max-height: 120px;
+          border-radius: 10px;
+          margin-top: 12px;
+          border: 1px solid var(--border-color);
+        }
+
+        /* Terms Checkbox */
+        .terms-row {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          margin: 28px 0;
+        }
+
+        .custom-checkbox {
+          width: 20px;
+          height: 20px;
+          accent-color: var(--razzmatazz);
+          cursor: pointer;
+        }
+
+        .terms-label {
+          font-size: 0.9rem;
+          color: var(--text-dark);
+          font-weight: 500;
+        }
+
+        .terms-link {
+          color: var(--razzmatazz);
+          font-weight: 700;
+          text-decoration: underline;
+          transition: color 0.2s;
+        }
+
+        .terms-link:hover {
+          color: var(--twilight-indigo);
+        }
+
+        /* Submit Button */
+        .submit-btn {
+          width: 100%;
+          padding: 16px;
+          border-radius: 50px;
+          border: none;
+          background: linear-gradient(135deg, var(--razzmatazz) 0%, #c41e5b 100%);
+          color: #FFFFFF;
+          font-size: 1.05rem;
+          font-weight: 800;
+          cursor: pointer;
+          box-shadow: 0 10px 25px rgba(237, 41, 116, 0.35);
+          transition: all 0.25s ease;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .submit-btn:hover:not(:disabled) {
+          transform: translateY(-2px);
+          box-shadow: 0 14px 30px rgba(237, 41, 116, 0.5);
+        }
+
+        .submit-btn:disabled {
+          opacity: 0.7;
+          cursor: not-allowed;
+        }
+
+        .spinner {
+          width: 24px;
+          height: 24px;
+          border: 3px solid rgba(255, 255, 255, 0.3);
+          border-top-color: #FFFFFF;
+          border-radius: 50%;
+          animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+          to { transform: rotate(360deg); }
+        }
+
+        /* Success Modal */
+        .modal-overlay {
+          position: fixed;
+          inset: 0;
+          background: rgba(27, 47, 81, 0.75);
+          backdrop-filter: blur(8px);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 1000;
+          padding: 20px;
+        }
+
+        .modal-card {
+          background: #FFFFFF;
+          border-radius: 28px;
+          padding: 40px 32px;
+          max-width: 460px;
+          width: 100%;
+          text-align: center;
+          box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+          animation: modalUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes modalUp {
+          from { transform: translateY(20px); opacity: 0; }
+          to { transform: translateY(0); opacity: 1; }
+        }
+
+        .success-icon {
+          font-size: 3.5rem;
+          color: #10B981;
+          margin-bottom: 16px;
+        }
+
+        .modal-card h2 {
+          font-size: 1.8rem;
+          font-weight: 800;
+          color: var(--twilight-indigo);
+          margin-bottom: 8px;
+        }
+
+        .modal-card p {
+          color: var(--text-muted);
+          font-size: 0.95rem;
+          margin-bottom: 28px;
+        }
+
+        .modal-actions {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+        }
+
+        .btn-modal-primary {
+          padding: 14px;
+          border-radius: 12px;
+          border: none;
+          background: var(--twilight-indigo);
+          color: #FFFFFF;
+          font-weight: 700;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          transition: background 0.2s;
+        }
+
+        .btn-modal-primary:hover {
+          background: #12223d;
+        }
+
+        .btn-modal-close {
+          padding: 12px;
+          border-radius: 12px;
+          border: 1.5px solid var(--border-color);
+          background: transparent;
+          color: var(--text-muted);
+          font-weight: 700;
+          cursor: pointer;
+        }
+
+        /* Responsiveness */
+        @media (max-width: 640px) {
+          .form-grid {
+            grid-template-columns: 1fr;
+          }
+          .input-group.full-width {
+            grid-column: span 1;
+          }
+          .payment-content {
+            flex-direction: column;
+            align-items: flex-start;
+          }
+          .qr-card {
+            align-self: center;
+          }
+          .form-card {
+            padding: 24px 18px;
+          }
+        }
+      `}</style>
+
+      <Navbar />
+
+      {/* Hero Header */}
+      <section className="register-hero">
+        <div className="hero-glow" />
+        <h1>Special Event <span>Registration</span></h1>
+        <p>Lock in your spot for the Independence Day Run 2026. Fill out the form below to confirm your bib.</p>
+      </section>
+
+      {/* Main Form Container */}
+      <main className="register-main">
+        <div className="form-card">
+          <form onSubmit={handleSubmit(onSubmit)}>
+            
+            {/* Section 1: Participant Info */}
+            <div className="form-section-title">
+              <FaUser style={{ color: 'var(--pacific-blue)' }} />
+              Participant Information
             </div>
 
-            {success && (
-                <div className="modal">
-                    <div className="modal-box">
-                        <h2>Registration Successful</h2>
-
-                        <p>
-                            Thank you for registering.
-                        </p>
-
-                        <button onClick={downloadSlip} className="button">
-                            Download Slip
-                        </button>
-
-                        <button
-                            onClick={() => setSuccess(false)}
-                            className="button"
-                        >
-                            Close
-                        </button>
-                    </div>
+            <div className="form-grid">
+              {/* Full Name */}
+              <div className="input-group full-width">
+                <label>Full Name</label>
+                <div className="input-wrapper">
+                  <FaUser className="input-icon" />
+                  <input
+                    type="text"
+                    placeholder="John Doe"
+                    className="input-field"
+                    {...register("fullName", { required: "Full Name is required" })}
+                  />
                 </div>
-            )}
-            <Footer />
-        </>
-    )
-}
+                {errors.fullName && <span className="error-msg">{errors.fullName.message}</span>}
+              </div>
 
-export default RegisterRun
+              {/* Email */}
+              <div className="input-group full-width">
+                <label>Email Address</label>
+                <div className="input-wrapper">
+                  <FaEnvelope className="input-icon" />
+                  <input
+                    type="email"
+                    placeholder="runner@example.com"
+                    className="input-field"
+                    {...register("email", { 
+                      required: "Email is required",
+                      pattern: {
+                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                        message: "Invalid email address"
+                      }
+                    })}
+                  />
+                </div>
+                {errors.email && <span className="error-msg">{errors.email.message}</span>}
+              </div>
+
+              {/* Age */}
+              <div className="input-group">
+                <label>Age</label>
+                <div className="input-wrapper">
+                  <FaHashtag className="input-icon" />
+                  <input
+                    type="number"
+                    placeholder="e.g. 24"
+                    className="input-field"
+                    {...register("age", { 
+                      required: "Age is required",
+                      min: { value: 10, message: "Minimum age is 10" }
+                    })}
+                  />
+                </div>
+                {errors.age && <span className="error-msg">{errors.age.message}</span>}
+              </div>
+
+              {/* Race Category */}
+              <div className="input-group">
+                <label>Race Category</label>
+                <div className="input-wrapper">
+                  <FaRunning className="input-icon" />
+                  <select
+                    className="input-field"
+                    {...register("category", { required: "Please select a category" })}
+                  >
+                    <option value="">Select Distance</option>
+                    <option value="5 KM">5 KM Fun Run</option>
+                    <option value="10 KM">10 KM Challenge</option>
+                  </select>
+                </div>
+                {errors.category && <span className="error-msg">{errors.category.message}</span>}
+              </div>
+
+              {/* Emergency Contact */}
+              <div className="input-group full-width">
+                <label>Emergency Contact Number</label>
+                <div className="input-wrapper">
+                  <FaPhoneAlt className="input-icon" />
+                  <input
+                    type="tel"
+                    placeholder="03XXXXXXXXX"
+                    className="input-field"
+                    {...register("emergency", { required: "Emergency contact is required" })}
+                  />
+                </div>
+                {errors.emergency && <span className="error-msg">{errors.emergency.message}</span>}
+              </div>
+            </div>
+
+            {/* Section 2: Payment Details */}
+            <div className="payment-box">
+              <div className="payment-header">
+                <FaQrcode style={{ color: 'var(--pacific-blue)' }} />
+                Payment Information
+              </div>
+
+              <div className="payment-content">
+                <div className="payment-details">
+                  <p><strong>Fee:</strong> PKR 500</p>
+                  <p><strong>Payment Method:</strong> Easypaisa / JazzCash</p>
+                  <p><strong>Account Title:</strong> Gojra Running Club</p>
+                  <p><strong>Account Number:</strong> 0300-1234567</p>
+                </div>
+
+                <div className="qr-card">
+                  <img src={QR} alt="Payment QR Code" />
+                  <span>Scan to Pay</span>
+                </div>
+              </div>
+
+              <div className="instructions-list">
+                <strong>Instructions:</strong>
+                <ol>
+                  <li>Transfer the PKR 500 fee to the account above.</li>
+                  <li>Copy the Transaction ID (TID) from your digital receipt.</li>
+                  <li>Upload a screenshot of the payment receipt below.</li>
+                </ol>
+              </div>
+            </div>
+
+            {/* Transaction ID & Screenshot */}
+            <div className="form-grid">
+              <div className="input-group full-width">
+                <label>Transaction ID (TID)</label>
+                <div className="input-wrapper">
+                  <FaHashtag className="input-icon" />
+                  <input
+                    type="text"
+                    placeholder="Enter payment transaction ID"
+                    className="input-field"
+                    {...register("TId", { required: "Transaction ID is required" })}
+                  />
+                </div>
+                {errors.TId && <span className="error-msg">{errors.TId.message}</span>}
+              </div>
+
+              <div className="input-group full-width">
+                <label>Payment Proof (Screenshot)</label>
+                <div className="file-upload-box">
+                  <FaCloudUploadAlt className="upload-icon" />
+                  <p style={{ margin: 0, fontWeight: 700, fontSize: '0.9rem' }}>
+                    Click or drag image to upload proof
+                  </p>
+                  <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+                    PNG, JPG, or WEBP supported
+                  </span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="file-input-hidden"
+                    {...register("payment", { 
+                      required: "Payment screenshot is required",
+                      onChange: (e) => {
+                        if (e.target.files[0]) {
+                          setPreview(URL.createObjectURL(e.target.files[0]));
+                        }
+                      }
+                    })}
+                  />
+                </div>
+                {errors.payment && <span className="error-msg">{errors.payment.message}</span>}
+
+                {preview && (
+                  <div style={{ textAlign: 'center' }}>
+                    <img className="preview-img" src={preview} alt="Payment Proof Preview" />
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Terms and Conditions Row */}
+            <div className="terms-row">
+              <input
+                type="checkbox"
+                id="termsCheck"
+                className="custom-checkbox"
+                {...register("terms", { required: true })}
+              />
+              <label htmlFor="termsCheck" className="terms-label">
+                I agree to the <NavLink to="/termsconditions" className="terms-link" target="_blank">Terms & Conditions</NavLink>
+              </label>
+            </div>
+            {errors.terms && <p className="error-msg" style={{ marginTop: '-18px', marginBottom: '20px' }}>You must accept the terms to register.</p>}
+
+            {/* Submit Button */}
+            <button type="submit" disabled={loading} className="submit-btn">
+              {loading ? <div className="spinner" /> : "Complete Registration"}
+            </button>
+          </form>
+        </div>
+      </main>
+
+      {/* Success Modal */}
+      {success && (
+        <div className="modal-overlay">
+          <div className="modal-card">
+            <FaCheckCircle className="success-icon" />
+            <h2>You're Registered!</h2>
+            <p>Thank you for signing up. Your details and payment proof have been submitted for verification.</p>
+
+            <div className="modal-actions">
+              <button onClick={downloadSlip} className="btn-modal-primary">
+                <FaDownload /> Download Registration Slip
+              </button>
+
+              <button onClick={() => setSuccess(false)} className="btn-modal-close">
+                Close Window
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <Footer />
+    </div>
+  );
+};
+
+export default RegisterRun;
