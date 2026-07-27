@@ -1,0 +1,1 @@
+import"./rolldown-runtime-QTnfLwEv.js";import{p as e,r as t,s as n}from"./index-B6YeD71D.js";e();var r=t(),i=()=>(0,r.jsx)(`div`,{children:(0,r.jsx)(n,{})});export{i as default};
