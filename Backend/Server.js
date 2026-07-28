@@ -7,15 +7,26 @@ import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
 import path from "path";
+import helmet from "helmet";
 import connectDBOne from "./Config/dbOne.js";
 import "./Config/dbTwo.js";
 import "./services/reminderScheduler.js"
+
 
 connectDBOne();
 // connectDB();
 const app = express();
 app.use(cors());
-app.use(express.json());
+app.use(
+  helmet({
+    crossOriginResourcePolicy: false,
+  })
+);
+app.use(express.json({limit: "100kb"}));
+app.use(express.urlencoded({
+    extended: true,
+    limit: "100kb"
+}));
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
 import adminRoutes from "./routes/adminRoutes.js";
@@ -25,6 +36,7 @@ import weeklyEventRoutes from "./routes/weeklyEventRoutes.js";
 import attendanceRoutes from "./routes/attendanceRoutes.js";
 import annualEventRoutes from "./routes/annualEventRoutes.js";
 import galleryRoutes from "./routes/cloudinaryRoutes.js";
+import paymentRegistration from "./routes/paymentRegistration.js";
 
 
 
@@ -37,6 +49,7 @@ app.use("/api/weekly-events",weeklyEventRoutes);
 app.use("/api/attendance",attendanceRoutes);
 app.use("/api/annual-events",annualEventRoutes);
 app.use("/api/gallery", galleryRoutes);
+app.use("/api", paymentRegistration);
 
 app.use((err, req, res, next)=>{
 

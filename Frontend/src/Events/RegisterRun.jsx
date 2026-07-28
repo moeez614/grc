@@ -1,27 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '../Components/Navbar';
 import Footer from '../Components/common/Footer';
 import QR from '../assets/qr.png';
 import { useForm } from "react-hook-form";
-import { NavLink } from "react-router-dom";
-import { 
-  FaUser, 
-  FaEnvelope, 
-  FaHashtag, 
-  FaRunning, 
-  FaPhoneAlt, 
-  FaCloudUploadAlt, 
-  FaCheckCircle, 
-  FaDownload, 
-  FaTimes, 
+import { NavLink, useParams } from "react-router-dom";
+import API from "../api/axios";
+import {
+  FaUser,
+  FaEnvelope,
+  FaHashtag,
+  FaRunning,
+  FaPhoneAlt,
+  FaCloudUploadAlt,
+  FaCheckCircle,
+  FaDownload,
+  FaTimes,
   FaQrcode,
   FaShieldAlt
 } from "react-icons/fa";
 
 const RegisterRun = () => {
+  const { id } = useParams();
+
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm();
 
@@ -29,15 +33,69 @@ const RegisterRun = () => {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [participant, setParticipant] = useState(null);
+  const [event, setEvent] = useState(null);
+  const [loadingEvent, setLoadingEvent] = useState(true);
+  const [selectedCategory, setSelectedCategory] = useState(null);
 
-  const onSubmit = (data) => {
-    setLoading(true);
+  useEffect(() => {
+    const getEvent = async () => {
+      try {
+        const res = await API.get(`/annual-events/${id}`);
 
-    setTimeout(() => {
+        setEvent(res.data);
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setLoadingEvent(false);
+      }
+    };
+
+    getEvent();
+  }, [id]);
+
+  const onSubmit = async (data) => {
+    try {
+      setLoading(true);
+
+      const formData = new FormData();
+
+      formData.append("eventId", id);
+      formData.append("fullName", data.fullName);
+      formData.append("email", data.email);
+      formData.append("age", data.age);
+      formData.append("category", data.category);
+      formData.append("emergency", data.emergency);
+      formData.append("transactionId", data.transactionId);
+
+      // uploaded image
+      formData.append("payment", data.payment[0]);
+
+      const res = await API.post(
+        "/register",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      if (res.data.success) {
+        reset();
+        setParticipant(data);
+        setSuccess(true);
+        setPreview(null);
+      }
+    } catch (err) {
+      console.error(err);
+
+      alert(
+        err.response?.data?.message ||
+        "Registration failed."
+      );
+    } finally {
       setLoading(false);
-      setParticipant(data);
-      setSuccess(true);
-    }, 1800);
+    }
   };
 
   const downloadSlip = () => {
@@ -54,11 +112,11 @@ Email Address:    ${participant?.email}
 Age:              ${participant?.age}
 Race Category:    ${participant?.category}
 Emergency Contact:${participant?.emergency}
-Transaction ID:   ${participant?.TId}
+Transaction ID:   ${participant?.transactionId}
 
 Status: Pending Verification
-Event Date: 14 August 2026
-Venue: Gojra Sports Complex
+Event Date: ${new Date(event?.eventDate).toLocaleDateString()}
+Venue: ${event?.location}
 
 Thank you for registering with Gojra Running Club!
 ========================================
@@ -72,6 +130,45 @@ Thank you for registering with Gojra Running Club!
     a.download = `GojraRun-${participant?.fullName?.replace(/\s+/g, '_') || 'Slip'}.txt`;
     a.click();
   };
+  const registrationClosed =
+    event?.registrationStatus !== "Open" ||
+    new Date(event.registrationDeadline) < new Date();
+  if (registrationClosed) {
+    return (
+      <>
+        <Navbar />
+
+        <div
+          style={{
+            minHeight: "70vh",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            flexDirection: "column",
+            textAlign: "center",
+            padding: "40px"
+          }}
+        >
+          <h1>Registration Closed</h1>
+
+          <p>
+            Registration for <strong>{event?.eventName}</strong> has
+            ended.
+          </p>
+
+          <NavLink
+            to={`/events/special/description/${id}`}
+            className="submit-btn"
+            style={{ maxWidth: 250, marginTop: 20 }}
+          >
+            Back to Event
+          </NavLink>
+        </div>
+
+        <Footer />
+      </>
+    );
+  }
 
   return (
     <div className="register-page-wrapper">
@@ -530,15 +627,19 @@ Thank you for registering with Gojra Running Club!
       {/* Hero Header */}
       <section className="register-hero">
         <div className="hero-glow" />
-        <h1>Special Event <span>Registration</span></h1>
-        <p>Lock in your spot for the Independence Day Run 2026. Fill out the form below to confirm your bib.</p>
+        <h1>{event?.eventName} <span>Registration</span></h1>
+        <p>Complete your registration for {"\u00A0"}
+          {event?.eventName}
+          {"\u00A0"} before
+          {"\u00A0"}
+          {new Date(event?.registrationDeadline).toLocaleDateString()}</p>
       </section>
 
       {/* Main Form Container */}
       <main className="register-main">
         <div className="form-card">
           <form onSubmit={handleSubmit(onSubmit)}>
-            
+
             {/* Section 1: Participant Info */}
             <div className="form-section-title">
               <FaUser style={{ color: 'var(--pacific-blue)' }} />
@@ -570,7 +671,7 @@ Thank you for registering with Gojra Running Club!
                     type="email"
                     placeholder="runner@example.com"
                     className="input-field"
-                    {...register("email", { 
+                    {...register("email", {
                       required: "Email is required",
                       pattern: {
                         value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
@@ -589,11 +690,30 @@ Thank you for registering with Gojra Running Club!
                   <FaHashtag className="input-icon" />
                   <input
                     type="number"
-                    placeholder="e.g. 24"
                     className="input-field"
-                    {...register("age", { 
+
+                    {...register("age", {
+
                       required: "Age is required",
-                      min: { value: 10, message: "Minimum age is 10" }
+
+                      validate: value => {
+
+                        if (!selectedCategory)
+                          return "Select category first";
+
+                        if (
+                          Number(value) <
+                          Number(selectedCategory.ageLimit)
+                        ) {
+
+                          return `Minimum age for ${selectedCategory.raceDistance} is ${selectedCategory.ageLimit}`;
+
+                        }
+
+                        return true;
+
+                      }
+
                     })}
                   />
                 </div>
@@ -607,11 +727,28 @@ Thank you for registering with Gojra Running Club!
                   <FaRunning className="input-icon" />
                   <select
                     className="input-field"
-                    {...register("category", { required: "Please select a category" })}
+                    {...register("category", {
+                      required: "Please select a category",
+                      onChange: (e) => {
+
+                        const cat = event.categories.find(
+                          c => c.raceDistance === e.target.value
+                        );
+
+                        setSelectedCategory(cat);
+                      }
+                    })}
                   >
-                    <option value="">Select Distance</option>
-                    <option value="5 KM">5 KM Fun Run</option>
-                    <option value="10 KM">10 KM Challenge</option>
+                    {event?.categories?.map((cat, index) => (
+
+                      <option
+                        key={index}
+                        value={cat.raceDistance}
+                      >
+                        {cat.raceDistance}
+                      </option>
+
+                    ))}
                   </select>
                 </div>
                 {errors.category && <span className="error-msg">{errors.category.message}</span>}
@@ -642,14 +779,37 @@ Thank you for registering with Gojra Running Club!
 
               <div className="payment-content">
                 <div className="payment-details">
-                  <p><strong>Fee:</strong> PKR 500</p>
-                  <p><strong>Payment Method:</strong> Easypaisa / JazzCash</p>
-                  <p><strong>Account Title:</strong> Gojra Running Club</p>
-                  <p><strong>Account Number:</strong> 0300-1234567</p>
+                  <p><strong>Fee:</strong>PKR {selectedCategory?.registrationFee ?? "--"}</p>
+                  <p>
+
+                    <strong>Payment Method:</strong>
+
+                    {event?.paymentMethod}
+
+                  </p>
+
+                  <p>
+
+                    <strong>Account Title:</strong>
+
+                    {event?.accountTitle}
+
+                  </p>
+
+                  <p>
+
+                    <strong>Account Number:</strong>
+
+                    {event?.accountNumber}
+
+                  </p>
                 </div>
 
                 <div className="qr-card">
-                  <img src={QR} alt="Payment QR Code" />
+                  <img
+                    src={`${import.meta.env.VITE_API_URL}/uploads/annual-events/qr/${event?.qrImage.split("/").pop()}`}
+                    alt="QR"
+                  />
                   <span>Scan to Pay</span>
                 </div>
               </div>
@@ -657,7 +817,7 @@ Thank you for registering with Gojra Running Club!
               <div className="instructions-list">
                 <strong>Instructions:</strong>
                 <ol>
-                  <li>Transfer the PKR 500 fee to the account above.</li>
+                  <li>Transfer the fee to the account above.</li>
                   <li>Copy the Transaction ID (TID) from your digital receipt.</li>
                   <li>Upload a screenshot of the payment receipt below.</li>
                 </ol>
@@ -674,7 +834,9 @@ Thank you for registering with Gojra Running Club!
                     type="text"
                     placeholder="Enter payment transaction ID"
                     className="input-field"
-                    {...register("TId", { required: "Transaction ID is required" })}
+                    {...register("transactionId", {
+                      required: "Transaction ID is required",
+                    })}
                   />
                 </div>
                 {errors.TId && <span className="error-msg">{errors.TId.message}</span>}
@@ -694,12 +856,40 @@ Thank you for registering with Gojra Running Club!
                     type="file"
                     accept="image/*"
                     className="file-input-hidden"
-                    {...register("payment", { 
+                    {...register("payment", {
                       required: "Payment screenshot is required",
                       onChange: (e) => {
-                        if (e.target.files[0]) {
-                          setPreview(URL.createObjectURL(e.target.files[0]));
+
+                        const file = e.target.files[0];
+
+                        if (!file) return;
+
+                        const allowed = [
+                          "image/jpeg",
+                          "image/png",
+                          "image/webp",
+                        ];
+
+                        if (!allowed.includes(file.type)) {
+
+                          alert("Only JPG, PNG and WEBP images are allowed.");
+
+                          e.target.value = "";
+
+                          return;
                         }
+
+                        if (file.size > 2 * 1024 * 1024) {
+
+                          alert("Maximum file size is 2 MB.");
+
+                          e.target.value = "";
+
+                          return;
+                        }
+
+                        setPreview(URL.createObjectURL(file));
+
                       }
                     })}
                   />
@@ -729,7 +919,7 @@ Thank you for registering with Gojra Running Club!
             {errors.terms && <p className="error-msg" style={{ marginTop: '-18px', marginBottom: '20px' }}>You must accept the terms to register.</p>}
 
             {/* Submit Button */}
-            <button type="submit" disabled={loading} className="submit-btn">
+            <button type="submit" disabled={loading} className="submit-btn" disabled={registrationClosed || loading}>
               {loading ? <div className="spinner" /> : "Complete Registration"}
             </button>
           </form>
@@ -756,7 +946,15 @@ Thank you for registering with Gojra Running Club!
           </div>
         </div>
       )}
+      {registrationClosed && (
 
+        <p className="error-msg">
+
+          Registration Closed
+
+        </p>
+
+      )}
       <Footer />
     </div>
   );

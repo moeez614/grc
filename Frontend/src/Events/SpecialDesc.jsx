@@ -129,7 +129,7 @@ const SpecialDesc = () => {
           background: linear-gradient(135deg, var(--twilight-indigo) 0%, #0d1a30 100%);
           color: #ffffff;
           padding: 80px 20px 100px;
-          border-radius: 0 0 40px 40px;
+          border-radius: 0 0 10px 10px;
           overflow: hidden;
         }
 
@@ -942,7 +942,7 @@ const SpecialDesc = () => {
                             </div>
 
                             <NavLink
-                                to={`/events/special/register/${event._id}?distance=${category.raceDistance}`}
+                                to={`/events/special/register/${event._id}`}
                                 target="_blank"
                                 className="btn-card"
                                 style={{
@@ -1021,6 +1021,7 @@ const SpecialDesc = () => {
                         {event.registrationStatus === "Open" ? (
                             <NavLink
                                 to={`/events/special/register/${event._id}`}
+                                target="_blank"
                                 className="btn-hero-primary"
                             >
                                 Register Now

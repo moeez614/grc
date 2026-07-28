@@ -140,3 +140,8 @@ export default mongoose.model(
     "AnnualEvent",
     annualEventSchema
 );
+// const AnnualEvent =
+//     mongoose.models.AnnualEvent ||
+//     mongoose.model("AnnualEvent", annualEventSchema);
+
+// export default AnnualEvent;

@@ -6,66 +6,66 @@ import desktop from '../assets/final-desktop.webp';
 import API from "../api/axios";
 
 const calculateTimeLeft = (targetTime) => {
-    const difference = targetTime - new Date().getTime();
-    if (difference <= 0) {
-        return { days: 0, hours: 0, minutes: 0, seconds: 0 };
-    }
-    return {
-        days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-        hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
-        minutes: Math.floor((difference / 1000 / 60) % 60),
-        seconds: Math.floor((difference / 1000) % 60),
-    };
+  const difference = targetTime - new Date().getTime();
+  if (difference <= 0) {
+    return { days: 0, hours: 0, minutes: 0, seconds: 0 };
+  }
+  return {
+    days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+    hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+    minutes: Math.floor((difference / 1000 / 60) % 60),
+    seconds: Math.floor((difference / 1000) % 60),
+  };
 };
 
 const Special = () => {
-    const [events, setEvents] = useState([]);
-    const [timeLeftList, setTimeLeftList] = useState([]);
+  const [events, setEvents] = useState([]);
+  const [timeLeftList, setTimeLeftList] = useState([]);
 
-    useEffect(() => {
-        fetchEvents();
-    }, []);
+  useEffect(() => {
+    fetchEvents();
+  }, []);
 
-    const fetchEvents = async () => {
-        try {
-            const { data } = await API.get("/annual-events");
+  const fetchEvents = async () => {
+    try {
+      const { data } = await API.get("/annual-events");
 
-            setEvents(data);
+      setEvents(data);
 
-            setTimeLeftList(
-                data.map((event) =>
-                    calculateTimeLeft(
-                        new Date(
-                            `${event.eventDate.split("T")[0]}T${event.raceStartTime}:00`
-                        ).getTime()
-                    )
-                )
-            );
-        } catch (err) {
-            console.error(err);
-        }
-    };
-    useEffect(() => {
-        if (!events.length) return;
+      setTimeLeftList(
+        data.map((event) =>
+          calculateTimeLeft(
+            new Date(
+              `${event.eventDate.split("T")[0]}T${event.raceStartTime}:00`
+            ).getTime()
+          )
+        )
+      );
+    } catch (err) {
+      console.error(err);
+    }
+  };
+  useEffect(() => {
+    if (!events.length) return;
 
-        const timer = setInterval(() => {
-            setTimeLeftList(
-                events.map((event) =>
-                    calculateTimeLeft(
-                        new Date(
-                            `${event.eventDate.split("T")[0]}T${event.raceStartTime}:00`
-                        ).getTime()
-                    )
-                )
-            );
-        }, 1000);
+    const timer = setInterval(() => {
+      setTimeLeftList(
+        events.map((event) =>
+          calculateTimeLeft(
+            new Date(
+              `${event.eventDate.split("T")[0]}T${event.raceStartTime}:00`
+            ).getTime()
+          )
+        )
+      );
+    }, 1000);
 
-        return () => clearInterval(timer);
-    }, [events]);
-    return (
-        <div className="grc-special-page">
-            {/* Embedded CSS Styles */}
-            <style>{`
+    return () => clearInterval(timer);
+  }, [events]);
+  return (
+    <div className="grc-special-page">
+      {/* Embedded CSS Styles */}
+      <style>{`
         :root {
           --twilight-indigo: #1B2F51;
           --pacific-blue: #2BC4DA;
@@ -349,6 +349,19 @@ const Special = () => {
           color: var(--twilight-indigo);
           transform: translateY(-2px);
         }
+          .grc-btn-closed {
+  background: linear-gradient(135deg, #6B7280, #4B5563);
+  color: #FFFFFF;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(75, 85, 99, 0.25);
+}
+
+.grc-btn-closed:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, #5B6472, #374151);
+  color: #FFFFFF;
+}
 
         @media (max-width: 640px) {
           .grc-special-page {
@@ -363,103 +376,102 @@ const Special = () => {
         }
       `}</style>
 
-            {/* Hero Header */}
-            <header className="grc-header">
-                <h1 className="grc-title">Special Events</h1>
-                <p className="grc-subtitle">
-                    Experience world-class races, push your limits, and run alongside Gojra's premier running community.
-                </p>
-            </header>
+      {/* Hero Header */}
+      <header className="grc-header">
+        <h1 className="grc-title">Special Events</h1>
+        <p className="grc-subtitle">
+          Experience world-class races, push your limits, and run alongside Gojra's premier running community.
+        </p>
+      </header>
 
-            {/* Events Grid */}
-            <section className="grc-events-grid">
-                {events.map((event, idx) => {
-                    const time = timeLeftList[idx] || { days: 0, hours: 0, minutes: 0, seconds: 0 };
+      {/* Events Grid */}
+      <section className="grc-events-grid">
+        {events.map((event, idx) => {
+          const time = timeLeftList[idx] || { days: 0, hours: 0, minutes: 0, seconds: 0 };
 
-                    return (
-                        <article key={event.id} className="grc-event-card">
-                            {/* Event Banner Container */}
-                            <div className="grc-banner-container">
-                                <span className="grc-category-badge">{event.eventType}</span>
-                                <span className="grc-status-pill">
-                                    <span className="grc-pulse-dot"></span>
-                                    {event.registrationStatus}
-                                </span>
-                                <img
-                                    // src={`${import.meta.env.VITE_API_URL}/uploads/annual-events/banners/${event.banner}`}
-                                    src={
-                                        `${import.meta.env.VITE_API_URL}/uploads/annual-events/banners/${event.banner.split("/").pop()}`
-                                    }
-                                    alt={event.eventName}
-                                    className="grc-banner-img"
-                                    loading="lazy"
-                                />
-                                <div className="grc-banner-overlay" />
-                            </div>
+          return (
+            <article key={event.id} className="grc-event-card">
+              {/* Event Banner Container */}
+              <div className="grc-banner-container">
+                <span className="grc-category-badge">{event.eventType}</span>
+                <span className="grc-status-pill">
+                  <span className="grc-pulse-dot"></span>
+                  {event.registrationStatus}
+                </span>
+                <img
+                  src={
+                    `${import.meta.env.VITE_API_URL}/uploads/annual-events/banners/${event.banner.split("/").pop()}`
+                  }
+                  alt={event.eventName}
+                  className="grc-banner-img"
+                  loading="lazy"
+                />
+                <div className="grc-banner-overlay" />
+              </div>
 
-                            {/* Card Body */}
-                            <div className="grc-card-body">
-                                <h2 className="grc-event-heading">{event.eventName}</h2>
+              {/* Card Body */}
+              <div className="grc-card-body">
+                <h2 className="grc-event-heading">{event.eventName}</h2>
 
-                                {/* Live Digital Countdown */}
-                                <div className="grc-ticker-box">
-                                    <div className="grc-ticker-label">Race Starts In</div>
-                                    <div className="grc-ticker-grid">
-                                        <div className="grc-time-block">
-                                            <span className="grc-time-number">
-                                                {String(time.days).padStart(2, '0')}
-                                            </span>
-                                            <span className="grc-time-unit">Days</span>
-                                        </div>
-                                        <div className="grc-time-block">
-                                            <span className="grc-time-number">
-                                                {String(time.hours).padStart(2, '0')}
-                                            </span>
-                                            <span className="grc-time-unit">Hours</span>
-                                        </div>
-                                        <div className="grc-time-block">
-                                            <span className="grc-time-number">
-                                                {String(time.minutes).padStart(2, '0')}
-                                            </span>
-                                            <span className="grc-time-unit">Mins</span>
-                                        </div>
-                                        <div className="grc-time-block">
-                                            <span className="grc-time-number">
-                                                {String(time.seconds).padStart(2, '0')}
-                                            </span>
-                                            <span className="grc-time-unit">Secs</span>
-                                        </div>
-                                    </div>
-                                </div>
+                {/* Live Digital Countdown */}
+                <div className="grc-ticker-box">
+                  <div className="grc-ticker-label">Race Starts In</div>
+                  <div className="grc-ticker-grid">
+                    <div className="grc-time-block">
+                      <span className="grc-time-number">
+                        {String(time.days).padStart(2, '0')}
+                      </span>
+                      <span className="grc-time-unit">Days</span>
+                    </div>
+                    <div className="grc-time-block">
+                      <span className="grc-time-number">
+                        {String(time.hours).padStart(2, '0')}
+                      </span>
+                      <span className="grc-time-unit">Hours</span>
+                    </div>
+                    <div className="grc-time-block">
+                      <span className="grc-time-number">
+                        {String(time.minutes).padStart(2, '0')}
+                      </span>
+                      <span className="grc-time-unit">Mins</span>
+                    </div>
+                    <div className="grc-time-block">
+                      <span className="grc-time-number">
+                        {String(time.seconds).padStart(2, '0')}
+                      </span>
+                      <span className="grc-time-unit">Secs</span>
+                    </div>
+                  </div>
+                </div>
 
-                                {/* Call To Action Buttons */}
-                                <div className="grc-actions">
-                                    {event.registrationStatus === "Open" ? (
-                                        <NavLink
-                                            to={`/events/special/description/${event._id}`}
-                                            className="grc-btn grc-btn-primary"
-                                        >
-                                            Register Now
-                                        </NavLink>
-                                    ) : (
-                                        <button
-                                            className="grc-btn grc-btn-primary"
-                                            disabled
-                                        >
-                                            Registration Closed
-                                        </button>
-                                    )}
-                                    <NavLink to={event.resultsUrl} className="grc-btn grc-btn-secondary">
-                                        View Results
-                                    </NavLink>
-                                </div>
-                            </div>
-                        </article>
-                    );
-                })}
-            </section>
-        </div>
-    );
+                {/* Call To Action Buttons */}
+                <div className="grc-actions">
+                  <NavLink
+                    to={`/events/special/description/${event._id}`}
+                    className={`grc-btn ${event.registrationStatus === "Open"
+                      ? "grc-btn-primary"
+                      : "grc-btn-closed"
+                      }`}
+                  >
+                    {event.registrationStatus === "Open"
+                      ? "Register Now"
+                      : "Registration Closed"}
+                  </NavLink>
+
+                  <NavLink
+                    to={event.resultsUrl}
+                    className="grc-btn grc-btn-secondary"
+                  >
+                    View Results
+                  </NavLink>
+                </div>
+              </div>
+            </article>
+          );
+        })}
+      </section>
+    </div>
+  );
 };
 
 export default Special;

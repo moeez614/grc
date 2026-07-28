@@ -59,7 +59,7 @@ function App() {
             <Route path='special' element={<Special />}></Route>
           </Route>
           <Route path='/events/special/description/:id' element={<SpecialDesc />}></Route>
-          <Route path='/events/special/register' element={
+          <Route path='/events/special/register/:id' element={
             <Suspense fallback={<Loader />}>
               <RegisterRun />
             </Suspense>
