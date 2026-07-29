@@ -20,39 +20,39 @@ export default function GojraRunningClub() {
   // Sample Club Data
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+
+  const [role, setRole] = useState("All");
+  const [page, setPage] = useState(1);
+  const limit = 12;
+  const [totalPages, setTotalPages] = useState(1);
+  
 
   useEffect(() => {
-    fetchMembers();
-  }, []);
+    const delay = setTimeout(() => {
+      fetchMembers();
+    }, 400); // debounce
+
+    return () => clearTimeout(delay);
+  }, [search, role, page]);
 
   const fetchMembers = async () => {
     try {
-      const { data } = await API.get("/members");
-      setMembers(data);
+      const { data } = await API.get("/members", {
+        params: {
+          search,
+          role,
+          page,
+          limit: 3,
+        },
+      });
+
+      setMembers(data.members);
+      setTotalPages(data.totalPages);
     } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
+      console.log(err);
     }
   };
-
-
-  const [search, setSearch] = useState('');
-  const [selectedRole, setSelectedRole] = useState('All');
-
-  // Filter Logic
-  const filteredMembers = members.filter((member) => {
-    const matchesSearch =
-      member.name.toLowerCase().includes(search.toLowerCase()) ||
-      member.email.toLowerCase().includes(search.toLowerCase());
-
-    const matchesRole =
-      selectedRole === "All" || member.title === selectedRole;
-
-    return matchesSearch && matchesRole;
-  });
-
-  // Statistics
   const totalKm = members.reduce(
     (acc, m) => acc + (m.runningStats?.totalDistance || 0),
     0
@@ -106,21 +106,27 @@ export default function GojraRunningClub() {
               type="text"
               placeholder="Search runner or email..."
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setPage(1);
+              }}
               style={styles.searchInput}
             />
 
             <div style={styles.filterGroup}>
-              {["All", "Admin", "Member"].map(role => (
+              {["All", "Founder", "Admin", "Coach", "Member"].map(item => (
                 <button
-                  key={role}
-                  onClick={() => setSelectedRole(role)}
+                  key={item}
+                  onClick={() => {
+                    setRole(item);
+                    setPage(1);
+                  }}
                   style={{
                     ...styles.filterBtn,
-                    ...(selectedRole === role ? styles.filterBtnActive : {})
+                    ...(role === item ? styles.filterBtnActive : {})
                   }}
                 >
-                  {role}
+                  {item}
                 </button>
               ))}
             </div>
@@ -128,16 +134,35 @@ export default function GojraRunningClub() {
 
           {/* Members Grid */}
           <div style={styles.grid}>
-            {filteredMembers.map(member => (
-              <MemberCard key={member.id} member={member} />
+            {members.map(member => (
+              <MemberCard key={member._id} member={member} />
             ))}
           </div>
 
-          {filteredMembers.length === 0 && (
+          {members.length === 0 && (
             <div style={styles.noResults}>
               No family members match your search standard.
             </div>
           )}
+          <div style={styles.pagination}>
+            <button
+              disabled={page === 1}
+              onClick={() => setPage((p) => p - 1)}
+            >
+              Previous
+            </button>
+
+            <span>
+              {page} / {totalPages}
+            </span>
+
+            <button
+              disabled={page === totalPages}
+              onClick={() => setPage((p) => p + 1)}
+            >
+              Next
+            </button>
+          </div>
         </div>
       </div>
 
@@ -236,6 +261,20 @@ const styles = {
     overflow: 'hidden',
     padding: '50px 20px',
     boxSizing: 'border-box',
+  },
+  pagination: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 20,
+    marginTop: 40,
+  },
+
+  paginationBtn: {
+    padding: "10px 20px",
+    borderRadius: 8,
+    border: "none",
+    cursor: "pointer",
   },
   bgOrb1: {
     position: 'absolute',

@@ -31,31 +31,31 @@ export default function MemberManagement() {
     // pagination
     const [currentPage, setCurrentPage] = useState(1);
     const membersPerPage = 5;
+    const filteredMembers = members;
+    // const filteredMembers = useMemo(() => {
 
-    const filteredMembers = useMemo(() => {
+    //     const searchText = search.trim().toLowerCase();
 
-        const searchText = search.trim().toLowerCase();
+    //     return members.filter((member) => {
 
-        return members.filter((member) => {
+    //         const matchesSearch =
+    //             member.name?.toLowerCase().includes(searchText) ||
+    //             member.title?.toLowerCase().includes(searchText) ||
+    //             member.email?.toLowerCase().includes(searchText) ||
+    //             member.memberId?.toLowerCase().includes(searchText);
 
-            const matchesSearch =
-                member.name?.toLowerCase().includes(searchText) ||
-                member.title?.toLowerCase().includes(searchText) ||
-                member.email?.toLowerCase().includes(searchText) ||
-                member.memberId?.toLowerCase().includes(searchText);
+    //         const matchesFilter =
+    //             filter === "All"
+    //                 ? true
+    //                 : filter === "Active"
+    //                     ? member.isActive
+    //                     : !member.isActive;
 
-            const matchesFilter =
-                filter === "All"
-                    ? true
-                    : filter === "Active"
-                        ? member.isActive
-                        : !member.isActive;
+    //         return matchesSearch && matchesFilter;
 
-            return matchesSearch && matchesFilter;
+    //     });
 
-        });
-
-    }, [members, search, filter]);
+    // }, [members, search, filter]);
 
     const totalPages = Math.ceil(
         filteredMembers.length / membersPerPage

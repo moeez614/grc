@@ -8,16 +8,16 @@ import { Link, NavLink, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import API from "../api/axios";
 import {
-    FaMedal,
-    FaRunning,
-    FaTshirt,
-    FaCertificate,
-    FaCalendarAlt,
-    FaMapMarkerAlt,
-    FaClock,
-    FaFlagCheckered,
-    FaCheck,
-    FaArrowRight
+  FaMedal,
+  FaRunning,
+  FaTshirt,
+  FaCertificate,
+  FaCalendarAlt,
+  FaMapMarkerAlt,
+  FaClock,
+  FaFlagCheckered,
+  FaCheck,
+  FaArrowRight
 } from "react-icons/fa";
 
 import { MapContainer, TileLayer, Polyline, Marker, Tooltip } from "react-leaflet";
@@ -29,84 +29,84 @@ import markerShadow from "leaflet/dist/images/marker-shadow.png";
 delete L.Icon.Default.prototype._getIconUrl;
 
 L.Icon.Default.mergeOptions({
-    iconRetinaUrl: markerIcon2x,
-    iconUrl: markerIcon,
-    shadowUrl: markerShadow,
+  iconRetinaUrl: markerIcon2x,
+  iconUrl: markerIcon,
+  shadowUrl: markerShadow,
 });
 
 const SpecialDesc = () => {
 
-    const { id } = useParams();
+  const { id } = useParams();
 
-    const [event, setEvent] = useState(null);
+  const [event, setEvent] = useState(null);
 
-    const getEvent = async () => {
-        try {
-            const response = await API.get(`/annual-events/${id}`);
-            setEvent(response.data);
-        } catch (err) {
-            console.log("Error:", err);
-            console.log("Response:", err.response);
-        }
-    };
-    useEffect(() => {
-        getEvent();
-    }, [id]);
-    if (!event) {
-        return (
-            <>
-                <Navbar />
-                <div style={{ padding: "100px", textAlign: "center" }}>
-                    Loading...
-                </div>
-                <Footer />
-            </>
-        );
+  const getEvent = async () => {
+    try {
+      const response = await API.get(`/annual-events/${id}`);
+      setEvent(response.data);
+    } catch (err) {
+      console.log("Error:", err);
+      console.log("Response:", err.response);
     }
-    const route = event.coordinates.map(item => {
-        const [lat, lng] = item.split(",").map(Number);
-        return [lat, lng];
-    });
-
-
-
-    const detailsData = [
-        {
-            icon: <FaFlagCheckered />,
-            label: "Event Name",
-            value: event.eventName,
-        },
-        {
-            icon: <FaCalendarAlt />,
-            label: "Event Date",
-            value: new Date(event.eventDate).toLocaleDateString("en-GB"),
-        },
-        {
-            icon: <FaClock />,
-            label: "Reporting Time",
-            value: event.reportingTime,
-        },
-        {
-            icon: <FaRunning />,
-            label: "Race Start",
-            value: event.raceStartTime,
-        },
-        {
-            icon: <FaMapMarkerAlt />,
-            label: "Venue",
-            value: event.location,
-        },
-        {
-            icon: <FaMedal />,
-            label: "Registration Deadline",
-            value: new Date(event.registrationDeadline).toLocaleDateString("en-GB"),
-        },
-    ];
-
+  };
+  useEffect(() => {
+    getEvent();
+  }, [id]);
+  if (!event) {
     return (
-        <div className="special-wrapper">
-            {/* Dynamic CSS Styles Inline */}
-            <style>{`
+      <>
+        <Navbar />
+        <div style={{ padding: "100px", textAlign: "center" }}>
+          Loading...
+        </div>
+        <Footer />
+      </>
+    );
+  }
+  const route = event.coordinates.map(item => {
+    const [lat, lng] = item.split(",").map(Number);
+    return [lat, lng];
+  });
+
+
+
+  const detailsData = [
+    {
+      icon: <FaFlagCheckered />,
+      label: "Event Name",
+      value: event.eventName,
+    },
+    {
+      icon: <FaCalendarAlt />,
+      label: "Event Date",
+      value: new Date(event.eventDate).toLocaleDateString("en-GB"),
+    },
+    {
+      icon: <FaClock />,
+      label: "Reporting Time",
+      value: event.reportingTime,
+    },
+    {
+      icon: <FaRunning />,
+      label: "Race Start",
+      value: event.raceStartTime,
+    },
+    {
+      icon: <FaMapMarkerAlt />,
+      label: "Venue",
+      value: event.location,
+    },
+    {
+      icon: <FaMedal />,
+      label: "Registration Deadline",
+      value: new Date(event.registrationDeadline).toLocaleDateString("en-GB"),
+    },
+  ];
+
+  return (
+    <div className="special-wrapper">
+      {/* Dynamic CSS Styles Inline */}
+      <style>{`
         :root {
           --twilight-indigo: #1B2F51;
           --pacific-blue: #2BC4DA;
@@ -800,251 +800,251 @@ const SpecialDesc = () => {
 }
       `}</style>
 
-            <Navbar />
-            {/* ================= Modern Hero Section ================= */}
-            <section className="hero-section">
+      <Navbar />
+      {/* ================= Modern Hero Section ================= */}
+      <section className="hero-section">
 
-                {/* Ambient Background Glows */}
-                <div className="hero-glow-left" />
-                <div className="hero-glow-right" />
+        {/* Ambient Background Glows */}
+        <div className="hero-glow-left" />
+        <div className="hero-glow-right" />
 
-                <div className="hero-container">
-                    {/* Left Column: Core Messaging */}
-                    <div className="hero-text-col">
+        <div className="hero-container">
+          {/* Left Column: Core Messaging */}
+          <div className="hero-text-col">
 
-                        <h1 className="hero-title">
-                            {event.eventName}
-                        </h1>
+            <h1 className="hero-title">
+              {event.eventName}
+            </h1>
 
-                        <p className="hero-subtitle">
-                            Run for unity, health, and patriotism.
-                        </p>
+            <p className="hero-subtitle">
+              Run for unity, health, and patriotism.
+            </p>
 
-                        {/* Quick Event Info Bar */}
-                        <div className="hero-meta-bar">
-                            <div className="meta-item">
-                                <FaCalendarAlt className="meta-icon" />
-                                <div>
-                                    <span className="meta-label">Date</span>
-                                    <strong className="meta-val">{
-                                        new Date(event.eventDate).toLocaleDateString("en-GB", {
-                                            day: "numeric",
-                                            month: "long",
-                                            year: "numeric"
-                                        })
-                                    }
-                                    </strong>
-                                </div>
-                            </div>
-                            <div className="meta-item">
-                                <FaMapMarkerAlt className="meta-icon" />
-                                <div>
-                                    <span className="meta-label">Venue</span>
-                                    <strong className="meta-val">{event.location}</strong>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Action Buttons */}
-                        <div className="hero-actions">
-                            <NavLink className="btn-hero-primary" to={`/events/special/register/${event._id}`} target="_blank">
-                                Register Now <FaArrowRight />
-                            </NavLink>
-                           
-                            <a
-                                href="#"
-                                className="btn-hero-secondary"
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    document
-                                        .getElementById("route-section")
-                                        ?.scrollIntoView({ behavior: "smooth" });
-                                }}
-                            >
-                                Explore Route
-                            </a>
-                        </div>
-                    </div>
-
-                    {/* Right Column: Visual Preview Card */}
-                    <div className="hero-visual-col">
-                        <div className="visual-card">
-                            <img
-                                src={
-                                    event.banner
-                                        ? `${import.meta.env.VITE_API_URL}/uploads/annual-events/banners/${event.banner.split("/").pop()}`
-                                        : heroImage
-                                }
-                                alt={event.eventName}
-                                className="hero-img"
-                            />
-                            <div className="visual-overlay" />
-
-                        </div>
-                    </div>
+            {/* Quick Event Info Bar */}
+            <div className="hero-meta-bar">
+              <div className="meta-item">
+                <FaCalendarAlt className="meta-icon" />
+                <div>
+                  <span className="meta-label">Date</span>
+                  <strong className="meta-val">{
+                    new Date(event.eventDate).toLocaleDateString("en-GB", {
+                      day: "numeric",
+                      month: "long",
+                      year: "numeric"
+                    })
+                  }
+                  </strong>
                 </div>
-            </section>
-            {/* ================= Event Details ================= */}
-            <section className="section-container">
-                <div className="section-header">
-                    <span className="sub-tag">Event Information</span>
-                    <h2>Everything You Need To Know</h2>
-                    <p>Get ready for Gojra's premier running event. Here are the core event specifications.</p>
+              </div>
+              <div className="meta-item">
+                <FaMapMarkerAlt className="meta-icon" />
+                <div>
+                  <span className="meta-label">Venue</span>
+                  <strong className="meta-val">{event.location}</strong>
                 </div>
+              </div>
+            </div>
 
-                <div className="info-grid">
-                    {detailsData.map((item, idx) => (
-                        <div className="info-card" key={idx}>
-                            <div className="info-icon">{item.icon}</div>
-                            <div className="info-meta">
-                                <span>{item.label}</span>
-                                <h4>{item.value}</h4>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </section>
+            {/* Action Buttons */}
+            <div className="hero-actions">
+              <NavLink className="btn-hero-primary" to={`/events/special/register/${event._id}`} target="_blank">
+                Register Now <FaArrowRight />
+              </NavLink>
 
-            {/* ================= Race Categories ================= */}
-            <section className="section-container" style={{ paddingTop: 0 }}>
-                <div className="section-header">
-                    <span className="sub-tag">Choose Your Distance</span>
-                    <h2>Race Categories</h2>
-                    <p>Select a category tailored to your fitness level and join the challenge.</p>
-                </div>
+              <a
+                href="#"
+                className="btn-hero-secondary"
+                onClick={(e) => {
+                  e.preventDefault();
+                  document
+                    .getElementById("route-section")
+                    ?.scrollIntoView({ behavior: "smooth" });
+                }}
+              >
+                Explore Route
+              </a>
+            </div>
+          </div>
 
-                <div className="categories-grid">
-                    {event.categories.map((category, index) => (
-                        <div
-                            className={`category-card ${index === 0 ? "popular" : ""}`}
-                            key={category._id || index}
-                        >
-                            {/* {item.popular && <span className="popular-badge">Most Popular</span>} */}
+          {/* Right Column: Visual Preview Card */}
+          <div className="hero-visual-col">
+            <div className="visual-card">
+              <img
+                src={
+                  event.banner
+                    ? `${import.meta.env.VITE_API_URL}/uploads/annual-events/banners/${event.banner.split("/").pop()}`
+                    : heroImage
+                }
+                alt={event.eventName}
+                className="hero-img"
+              />
+              <div className="visual-overlay" />
 
-                            <div>
-                                <div className="cat-header">
-                                    <h3>{category.raceDistance}</h3>
-                                </div>
-
-                                <div className="price-tag">
-                                    <span className="amount">PKR {category.registrationFee}</span>
-                                    <span className="label">• Age {category.ageLimit}+</span>
-                                </div>
-
-                                <ul className="cat-features">
-                                    {category.allowances.map((item, i) => (
-                                        <li key={i}>
-                                            <FaCheck />
-                                            {item}
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-
-                            <NavLink
-                                to={`/events/special/register/${event._id}`}
-                                target="_blank"
-                                className="btn-card"
-                                style={{
-                                    background: category.popular ? 'var(--razzmatazz)' : 'var(--twilight-indigo)',
-                                    color: '#ffffff'
-                                }}
-                            >
-                                Register For {category.raceDistance}
-                            </NavLink>
-                        </div>
-                    ))}
-                </div>
-            </section>
-
-            {/* ================= Running Route Map ================= */}
-            <section id="route-section" className="section-container" style={{ paddingTop: 0 }}>
-                <div className="section-header">
-                    <span className="sub-tag">Official Course</span>
-                    <h2>Race Route Map</h2>
-                    <p>Explore the official track designed for maximum safety and high energy performance.</p>
-                </div>
-
-                <div className="map-card-wrapper">
-                    {route.length === 0 ? (
-                        <p>No route available.</p>
-                    ) : (
-                        <MapContainer
-                            center={route[0]}
-                            zoom={13}
-                            scrollWheelZoom={false}
-                            className="map"
-                        >
-                            <TileLayer
-                                attribution="&copy; OpenStreetMap contributors"
-                                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                            />
-
-                            <Polyline
-                                positions={route}
-                                pathOptions={{
-                                    color: "#ED2974",
-                                    weight: 5,
-                                    opacity: 0.9
-                                }}
-                            />
-
-                            <Marker position={route[0]}>
-                                <Tooltip permanent direction="top" offset={[0, -10]}>
-                                    🏁 Start Point
-                                </Tooltip>
-                            </Marker>
-
-                            <Marker position={route[route.length - 1]}>
-                                <Tooltip permanent direction="top" offset={[0, -10]}>
-                                    🏆 Finish Point
-                                </Tooltip>
-                            </Marker>
-                        </MapContainer>
-                    )}
-                </div>
-            </section>
-
-            {/* ================= FAQ Section ================= */}
-            <FAQ />
-
-            {/* ================= CTA Section ================= */}
-            <section className="section-container" style={{ paddingTop: 20 }}>
-                <div className="cta-box">
-                    <h2>Ready To Take The Challenge?</h2>
-                    <p>
-                        Join hundreds of passionate runners in Gojra. Earn your medal, experience the thrill,
-                        and create lasting memories this 14th of August!
-                    </p>
-
-                    <div className="cta-actions">
-                        {event.registrationStatus === "Open" ? (
-                            <NavLink
-                                to={`/events/special/register/${event._id}`}
-                                target="_blank"
-                                className="btn-hero-primary"
-                            >
-                                Register Now
-                            </NavLink>
-                        ) : (
-                            <button
-                                className="btn-hero-primary"
-                                disabled
-                            >
-                                Registration Closed
-                            </button>
-                        )}
-                        <Link to="/events/special" className="btn-outline">
-                            View All Events
-                        </Link>
-                    </div>
-                </div>
-            </section>
-
-            <Footer />
-
+            </div>
+          </div>
         </div>
-    );
+      </section>
+      {/* ================= Event Details ================= */}
+      <section className="section-container">
+        <div className="section-header">
+          <span className="sub-tag">Event Information</span>
+          <h2>Everything You Need To Know</h2>
+          <p>Get ready for Gojra's premier running event. Here are the core event specifications.</p>
+        </div>
+
+        <div className="info-grid">
+          {detailsData.map((item, idx) => (
+            <div className="info-card" key={idx}>
+              <div className="info-icon">{item.icon}</div>
+              <div className="info-meta">
+                <span>{item.label}</span>
+                <h4>{item.value}</h4>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ================= Race Categories ================= */}
+      <section className="section-container" style={{ paddingTop: 0 }}>
+        <div className="section-header">
+          <span className="sub-tag">Choose Your Distance</span>
+          <h2>Race Categories</h2>
+          <p>Select a category tailored to your fitness level and join the challenge.</p>
+        </div>
+
+        <div className="categories-grid">
+          {event.categories.map((category, index) => (
+            <div
+              className={`category-card ${index === 0 ? "popular" : ""}`}
+              key={category._id || index}
+            >
+              {/* {item.popular && <span className="popular-badge">Most Popular</span>} */}
+
+              <div>
+                <div className="cat-header">
+                  <h3>{category.raceDistance}</h3>
+                </div>
+
+                <div className="price-tag">
+                  <span className="amount">PKR {category.registrationFee}</span>
+                  <span className="label">• Age {category.ageLimit}+</span>
+                </div>
+
+                <ul className="cat-features">
+                  {category.allowances.map((item, i) => (
+                    <li key={i}>
+                      <FaCheck />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <NavLink
+                to={`/events/special/register/${event._id}`}
+                target="_blank"
+                className="btn-card"
+                style={{
+                  background: category.popular ? 'var(--razzmatazz)' : 'var(--twilight-indigo)',
+                  color: '#ffffff'
+                }}
+              >
+                Register For {category.raceDistance}
+              </NavLink>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ================= Running Route Map ================= */}
+      <section id="route-section" className="section-container" style={{ paddingTop: 0 }}>
+        <div className="section-header">
+          <span className="sub-tag">Official Course</span>
+          <h2>Race Route Map</h2>
+          <p>Explore the official track designed for maximum safety and high energy performance.</p>
+        </div>
+
+        <div className="map-card-wrapper">
+          {route.length === 0 ? (
+            <p>No route available.</p>
+          ) : (
+            <MapContainer
+              center={route[0]}
+              zoom={13}
+              scrollWheelZoom={false}
+              className="map"
+            >
+              <TileLayer
+                attribution="&copy; OpenStreetMap contributors"
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              />
+
+              <Polyline
+                positions={route}
+                pathOptions={{
+                  color: "#ED2974",
+                  weight: 5,
+                  opacity: 0.9
+                }}
+              />
+
+              <Marker position={route[0]}>
+                <Tooltip permanent direction="top" offset={[0, -10]}>
+                  🏁 Start Point
+                </Tooltip>
+              </Marker>
+
+              <Marker position={route[route.length - 1]}>
+                <Tooltip permanent direction="top" offset={[0, -10]}>
+                  🏆 Finish Point
+                </Tooltip>
+              </Marker>
+            </MapContainer>
+          )}
+        </div>
+      </section>
+
+      {/* ================= FAQ Section ================= */}
+      <FAQ />
+
+      {/* ================= CTA Section ================= */}
+      <section className="section-container" style={{ paddingTop: 20 }}>
+        <div className="cta-box">
+          <h2>Ready To Take The Challenge?</h2>
+          <p>
+            Join hundreds of passionate runners in Gojra. Earn your medal, experience the thrill,
+            and create lasting memories this 14th of August!
+          </p>
+
+          <div className="cta-actions">
+            {event.registrationStatus === "Open" ? (
+              <NavLink
+                to={`/events/special/register/${event._id}`}
+                target="_blank"
+                className="btn-hero-primary"
+              >
+                Register Now
+              </NavLink>
+            ) : (
+              <button
+                className="btn-hero-primary"
+                disabled
+              >
+                Registration Closed
+              </button>
+            )}
+            <Link to="/events/special" className="btn-outline">
+              View All Events
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <Footer />
+
+    </div>
+  );
 };
 
 export default SpecialDesc;

@@ -37,32 +37,194 @@ const upload = multer({
 
 // GET ALL MEMBERS
 
+// router.get("/", async (req, res) => {
+//     // try {
+
+
+//     //     const members = await Member.find()
+//     //         .sort({
+//     //             createdAt: -1
+//     //         });
+
+
+//     //     res.json(members);
+
+
+//     // }
+//     // catch (error) {
+
+//     //     res.status(500)
+//     //         .json({
+//     //             message: error.message
+//     //         });
+
+//     // }
+
+//     try {
+//     const {
+//       page = 1,
+//       limit = 12,
+//       search = "",
+//       role = "All",
+//     } = req.query;
+
+//     const query = {};
+
+//     if (search) {
+//       query.$or = [
+//         { name: { $regex: search, $options: "i" } },
+//         { email: { $regex: search, $options: "i" } },
+//         { memberId: { $regex: search, $options: "i" } },
+//       ];
+//     }
+
+//     if (role !== "All") {
+//       query.title = role;
+//     }
+
+//     const roleOrder = {
+//       Founder: 1,
+//       Admin: 2,
+//       Coach: 3,
+//       Member: 4,
+//     };
+
+//     const members = await Member.aggregate([
+//       { $match: query },
+
+//       {
+//         $addFields: {
+//           rolePriority: {
+//             $switch: {
+//               branches: [
+//                 { case: { $eq: ["$title", "Founder"] }, then: 1 },
+//                 { case: { $eq: ["$title", "Admin"] }, then: 2 },
+//                 { case: { $eq: ["$title", "Coach"] }, then: 3 },
+//                 { case: { $eq: ["$title", "Member"] }, then: 4 },
+//               ],
+//               default: 5,
+//             },
+//           },
+//         },
+//       },
+
+//       {
+//         $sort: {
+//           isActive: -1,
+//           rolePriority: 1,
+//           name: 1,
+//         },
+//       },
+
+//       { $skip: (page - 1) * Number(limit) },
+//       { $limit: Number(limit) },
+//     ]);
+
+//     const total = await Member.countDocuments(query);
+
+//     res.json({
+//       members,
+//       total,
+//       currentPage: Number(page),
+//       totalPages: Math.ceil(total / limit),
+//     });
+//   } catch (err) {
+//     res.status(500).json({ message: err.message });
+//   }
+//         //   const members = await Member.find()
+//         //     .sort({
+//         //         createdAt: -1
+//         //     });
+
+
+//         // res.json(members);
+// });
 router.get("/", async (req, res) => {
+  try {
+    let {
+      page = 1,
+      limit = 12,
+      search = "",
+      role = "All",
+    } = req.query;
 
+    page = Number(page);
+    limit = Number(limit);
 
-    try {
+    const query = {};
 
-
-        const members = await Member.find()
-            .sort({
-                createdAt: -1
-            });
-
-
-        res.json(members);
-
-
-    }
-    catch (error) {
-
-        res.status(500)
-            .json({
-                message: error.message
-            });
-
+    // Search
+    if (search.trim()) {
+      query.$or = [
+        { name: { $regex: search.trim(), $options: "i" } },
+        { email: { $regex: search.trim(), $options: "i" } },
+        { memberId: { $regex: search.trim(), $options: "i" } },
+      ];
     }
 
+    // Role Filter
+    if (role !== "All") {
+      query.title = role;
+    }
 
+    const result = await Member.aggregate([
+      { $match: query },
+
+      {
+        $addFields: {
+          rolePriority: {
+            $switch: {
+              branches: [
+                { case: { $eq: ["$title", "Founder"] }, then: 1 },
+                { case: { $eq: ["$title", "Admin"] }, then: 2 },
+                { case: { $eq: ["$title", "Coach"] }, then: 3 },
+                { case: { $eq: ["$title", "Member"] }, then: 4 },
+              ],
+              default: 5,
+            },
+          },
+        },
+      },
+
+      {
+        $sort: {
+          isActive: -1,
+          rolePriority: 1,
+          name: 1,
+        },
+      },
+
+      {
+        $facet: {
+          members: [
+            { $skip: (page - 1) * limit },
+            { $limit: limit },
+          ],
+          totalCount: [
+            { $count: "count" },
+          ],
+        },
+      },
+    ]);
+
+    const members = result[0].members;
+    const total = result[0].totalCount.length
+      ? result[0].totalCount[0].count
+      : 0;
+
+    res.json({
+      members,
+      totalMembers: total,
+      currentPage: page,
+      totalPages: Math.ceil(total / limit),
+      hasPrevPage: page > 1,
+      hasNextPage: page < Math.ceil(total / limit),
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: err.message,
+    });
+  }
 });
 
 // ADD MEMBER
